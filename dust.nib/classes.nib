@@ -7,16 +7,25 @@
             OUTLETS = {
                 coloursBox = id; 
                 contrastBox = id; 
+                diamondButton = id; 
+                directionalButton = id; 
+                hexButton = id; 
                 logoImage = id; 
                 motesSlider = id; 
                 screensBox = id; 
                 sizeSlider = id; 
+                squareButton = id; 
                 tailsBox = id; 
                 window = id; 
             }; 
             SUPERCLASS = ScreenSaverView; 
         }, 
-        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {
+            ACTIONS = {"" = id; }; 
+            CLASS = FirstResponder; 
+            LANGUAGE = ObjC; 
+            SUPERCLASS = NSObject; 
+        }, 
         {CLASS = ScreenSaverView; LANGUAGE = ObjC; SUPERCLASS = NSView; }
     ); 
     IBVersion = 1; 

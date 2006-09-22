@@ -27,31 +27,6 @@
 		F558318C010C618A01000001 /* DustMote.h in Headers */ = {isa = PBXBuildFile; fileRef = F558318A010C618A01000001 /* DustMote.h */; };
 /* End PBXBuildFile section */
 
-/* Begin PBXBuildStyle section */
-		014CEA420018CDE011CA2923 /* Development */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = NO;
-				GCC_DYNAMIC_NO_PIC = NO;
-				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = YES;
-				GCC_OPTIMIZATION_LEVEL = 0;
-				OPTIMIZATION_CFLAGS = "-O0";
-				ZERO_LINK = YES;
-			};
-			name = Development;
-		};
-		014CEA430018CDE011CA2923 /* Deployment */ = {
-			isa = PBXBuildStyle;
-			buildSettings = {
-				COPY_PHASE_STRIP = YES;
-				GCC_ENABLE_FIX_AND_CONTINUE = NO;
-				ZERO_LINK = NO;
-			};
-			name = Deployment;
-		};
-/* End PBXBuildStyle section */
-
 /* Begin PBXBundleTarget section */
 		089C1673FE841209C02AAC07 /* dust */ = {
 			isa = PBXBundleTarget;
@@ -63,25 +38,6 @@
 				089C1677FE841209C02AAC07 /* Frameworks */,
 				089C1679FE841209C02AAC07 /* Rez */,
 			);
-			buildSettings = {
-				DEBUGGING_SYMBOLS = NO;
-				FRAMEWORK_SEARCH_PATHS = "";
-				HEADER_SEARCH_PATHS = "";
-				INSTALL_PATH = "$(HOME)/Library/Screen Savers";
-				LIBRARY_SEARCH_PATHS = "";
-				OPTIMIZATION_CFLAGS = "-O3";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Pollen;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = saver;
-			};
 			dependencies = (
 			);
 			name = dust;
@@ -262,29 +218,6 @@
 			);
 			buildRules = (
 			);
-			buildSettings = {
-				FRAMEWORK_SEARCH_PATHS = "";
-				GCC_ALTIVEC_EXTENSIONS = YES;
-				GCC_ENABLE_CPP_EXCEPTIONS = NO;
-				GCC_ENABLE_CPP_RTTI = NO;
-				GCC_GENERATE_DEBUGGING_SYMBOLS = NO;
-				GCC_OPTIMIZATION_LEVEL = s;
-				HEADER_SEARCH_PATHS = "";
-				INFOPLIST_FILE = "Info-dust__Upgraded_.plist";
-				INSTALL_PATH = "\"$(HOME)/Library/Screen Savers\"";
-				LIBRARY_SEARCH_PATHS = "";
-				OTHER_CFLAGS = "";
-				OTHER_LDFLAGS = "";
-				OTHER_REZFLAGS = "";
-				PRODUCT_NAME = Pollen;
-				SECTORDER_FLAGS = "";
-				WARNING_CFLAGS = (
-					"-Wmost",
-					"-Wno-four-char-constants",
-					"-Wno-unknown-pragmas",
-				);
-				WRAPPER_EXTENSION = saver;
-			};
 			dependencies = (
 			);
 			name = "dust (Upgraded)";
@@ -299,12 +232,6 @@
 		089C1669FE841209C02AAC07 /* Project object */ = {
 			isa = PBXProject;
 			buildConfigurationList = C9C3A15009759A5C0045F59E /* Build configuration list for PBXProject "dust" */;
-			buildSettings = {
-			};
-			buildStyles = (
-				014CEA420018CDE011CA2923 /* Development */,
-				014CEA430018CDE011CA2923 /* Deployment */,
-			);
 			hasScannedForEncodings = 1;
 			mainGroup = 089C166AFE841209C02AAC07 /* dust */;
 			projectDirPath = "";
@@ -556,7 +483,10 @@
 		C9C3A15109759A5C0045F59E /* Development */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = ppc;
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPYING_PRESERVES_HFS_DATA = YES;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -569,13 +499,17 @@
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Development;
 		};
 		C9C3A15209759A5C0045F59E /* Deployment */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = ppc;
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPYING_PRESERVES_HFS_DATA = YES;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -588,13 +522,17 @@
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Deployment;
 		};
 		C9C3A15309759A5C0045F59E /* Default */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
-				ARCHS = ppc;
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPYING_PRESERVES_HFS_DATA = YES;
 				GCC_AUTO_VECTORIZATION = YES;
 				GCC_WARN_ABOUT_MISSING_PROTOTYPES = YES;
@@ -607,6 +545,7 @@
 				GCC_WARN_UNUSED_PARAMETER = YES;
 				GCC_WARN_UNUSED_VALUE = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				SDKROOT = /Developer/SDKs/MacOSX10.4u.sdk;
 			};
 			name = Default;
 		};

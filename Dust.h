@@ -39,6 +39,14 @@ enum
     LOGO_CUSTOM		= 2
 };
 
+/* The different mote shapes. */
+enum
+{
+	MOTE_SQUARE		= 0,
+	MOTE_DIAMOND	= 1,
+	MOTE_HEXAGON	= 2
+};
+
 /*
     Class implementing the Dust screensaver. Handles both the
     configuration and the display.
@@ -97,6 +105,12 @@ enum
 	
 	// size of an individual mote
 	int		moteSize;
+	
+	// shape of an individual mote
+	int		moteShape;
+	
+	// are motes directional?
+	BOOL	directional;
     
     // the array of motes
     DustMote*	motes;
@@ -141,6 +155,10 @@ enum
 	IBOutlet id sizeSlider;
 	IBOutlet id tailsBox;
     IBOutlet id window;
+	IBOutlet id squareButton;
+	IBOutlet id diamondButton;
+	IBOutlet id hexButton;
+	IBOutlet id directionalButton;
 }
 
 // methods used to load and run screen saver

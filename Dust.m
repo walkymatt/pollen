@@ -265,6 +265,14 @@
     useLogoColours = [prefs boolForKey:@"useLogoColours"];
     
     minimumContrast = [prefs boolForKey:@"contrastCheck"] ? CONTRAST_ON : CONTRAST_OFF;
+	
+	moteShape = [prefs integerForKey:@"moteShape"];
+	if ( moteShape < MOTE_SQUARE || moteShape > MOTE_HEXAGON )
+	{
+		moteShape = MOTE_SQUARE;
+	}
+	
+	directional = [prefs boolForKey:@"directional"];
     
     // remaining details are, after some consideration, not configurable
     smoothness = SMOOTHNESS;    
@@ -284,6 +292,8 @@
     [prefs setInteger:drawMode forKey:@"drawMode"];
     [prefs setInteger:logoMode forKey:@"logoMode"];
 	[prefs setInteger:moteSize forKey:@"moteSize"];
+	[prefs setInteger:moteShape forKey:@"moteShape"];
+	[prefs setBool:directional forKey:@"directional"];
     [prefs setBool:useLogoColours forKey:@"useLogoColours"];
     [prefs setBool:mainScreenOnly forKey:@"mainScreenOnly"];
     [prefs setBool:(minimumContrast > CONTRAST_OFF) forKey:@"contrastCheck"];
@@ -782,11 +792,11 @@
 		glBegin ( GL_LINES );
         for ( i = 0; i < numMotes; ++i )
         {
-            glLineWidth ( motes[i].mass / 10 );
+            glLineWidth ( motes[i].mass / 10.0f );
             
-            glColor3f ( (motes[i].colour.r + bg.r) / 2.0,
-						(motes[i].colour.g + bg.g) / 2.0,
-                        (motes[i].colour.b + bg.b) / 2.0 );
+            glColor3f ( (motes[i].colour.r + bg.r) / 2.0f,
+						(motes[i].colour.g + bg.g) / 2.0f,
+                        (motes[i].colour.b + bg.b) / 2.0f );
             glVertex2f ( motes[i].position.x,
                          motes[i].position.y );
             glVertex2f ( motes[i].previous.x,
@@ -798,23 +808,150 @@
     
     // always draw motes	
 	glBegin ( GL_QUADS);
-	for ( i = 0; i < numMotes; ++i )
-    {
-		float v2 = motes[i].velocity.x * motes[i].velocity.x + motes[i].velocity.y * motes[i].velocity.y;
-		float modv = sqrt(v2);
-		float mvx = (motes[i].velocity.x * motes[i].mass) / (modv * moteSize);
-		float mvy = (motes[i].velocity.y * motes[i].mass) / (modv * moteSize);
-		float mvx2 = mvx/1.5;
-		float mvy2 = mvy/1.5;
-        
-        glColor3f ( motes[i].colour.r,
-                    motes[i].colour.g,
-                    motes[i].colour.b );
-        glVertex2f ( motes[i].position.x + mvx,  motes[i].position.y + mvy );
-		glVertex2f ( motes[i].position.x + mvy2, motes[i].position.y - mvx2 );
-		glVertex2f ( motes[i].position.x - mvx,  motes[i].position.y - mvy );
-		glVertex2f ( motes[i].position.x - mvy2, motes[i].position.y + mvx2 );
-    }
+	switch ( moteShape )
+	{
+		case MOTE_SQUARE:
+		{
+			if ( directional )
+			{
+				for ( i = 0; i < numMotes; ++i )
+				{
+					float v2 = motes[i].velocity.x * motes[i].velocity.x + motes[i].velocity.y * motes[i].velocity.y;
+					float modv = sqrt(v2);
+					float mvx = (motes[i].velocity.x * motes[i].mass) / (modv * moteSize);
+					float mvy = (motes[i].velocity.y * motes[i].mass) / (modv * moteSize);
+					
+					glColor3f ( motes[i].colour.r,
+								motes[i].colour.g,
+								motes[i].colour.b );
+					glVertex2f ( motes[i].position.x + mvx,  motes[i].position.y + mvy );
+					glVertex2f ( motes[i].position.x + mvy, motes[i].position.y - mvx );
+					glVertex2f ( motes[i].position.x - mvx,  motes[i].position.y - mvy );
+					glVertex2f ( motes[i].position.x - mvy, motes[i].position.y + mvx );
+				}
+			}
+			else
+			{
+				// non-directional squares are aligned to screen -- adjust scaling
+				// accordingly
+				float scale = 1.0f / (moteSize * 1.414f);
+				for ( i = 0; i < numMotes; ++i )
+				{
+					float mvx = motes[i].mass * scale;
+					
+					glColor3f ( motes[i].colour.r,
+								motes[i].colour.g,
+								motes[i].colour.b );
+					glVertex2f ( motes[i].position.x + mvx,  motes[i].position.y + mvx );
+					glVertex2f ( motes[i].position.x - mvx, motes[i].position.y + mvx );
+					glVertex2f ( motes[i].position.x - mvx,  motes[i].position.y - mvx );
+					glVertex2f ( motes[i].position.x + mvx, motes[i].position.y - mvx );
+				}		
+			}
+			break;
+		}
+		
+		case MOTE_DIAMOND:
+		{
+			if ( directional )
+			{
+				for ( i = 0; i < numMotes; ++i )
+				{
+					float v2 = motes[i].velocity.x * motes[i].velocity.x + motes[i].velocity.y * motes[i].velocity.y;
+					float modv = sqrt(v2);
+					float mvx = (motes[i].velocity.x * motes[i].mass) / (modv * moteSize);
+					float mvy = (motes[i].velocity.y * motes[i].mass) / (modv * moteSize);
+					float mvx2 = mvx/1.5f;
+					float mvy2 = mvy/1.5f;
+					
+					glColor3f ( motes[i].colour.r,
+								motes[i].colour.g,
+								motes[i].colour.b );
+					glVertex2f ( motes[i].position.x + mvx,  motes[i].position.y + mvy );
+					glVertex2f ( motes[i].position.x + mvy2, motes[i].position.y - mvx2 );
+					glVertex2f ( motes[i].position.x - mvx,  motes[i].position.y - mvy );
+					glVertex2f ( motes[i].position.x - mvy2, motes[i].position.y + mvx2 );
+				}
+			}
+			else
+			{
+				for ( i = 0; i < numMotes; ++i )
+				{
+					float mvx = motes[i].mass / moteSize;
+					float mvy = mvx/1.5f;
+					
+					glColor3f ( motes[i].colour.r,
+								motes[i].colour.g,
+								motes[i].colour.b );
+					glVertex2f ( motes[i].position.x + mvx,  motes[i].position.y );
+					glVertex2f ( motes[i].position.x, motes[i].position.y + mvy );
+					glVertex2f ( motes[i].position.x - mvx,  motes[i].position.y );
+					glVertex2f ( motes[i].position.x, motes[i].position.y - mvy );
+				}		
+			}
+			break;
+		}
+		
+		case MOTE_HEXAGON:
+		{
+			if ( directional )
+			{
+				for ( i = 0; i < numMotes; ++i )
+				{
+					float v2 = motes[i].velocity.x * motes[i].velocity.x + motes[i].velocity.y * motes[i].velocity.y;
+					float modv = sqrt(v2);
+					float mvx = (motes[i].velocity.x * motes[i].mass) / (modv * moteSize);
+					float mvy = (motes[i].velocity.y * motes[i].mass) / (modv * moteSize);
+					float mvx1 = mvx * 0.5f;
+					float mvx2 = mvx * 0.866f;
+					float mvy1 = mvy * 0.5f;
+					float mvy2 = mvy * 0.866f;
+					
+					glColor3f ( motes[i].colour.r,
+								motes[i].colour.g,
+								motes[i].colour.b );
+					glVertex2f ( motes[i].position.x + mvx, motes[i].position.y + mvy );
+					glVertex2f ( motes[i].position.x + mvx1 - mvy2, motes[i].position.y + mvy1 + mvx2 );
+					glVertex2f ( motes[i].position.x - mvx1 - mvy2, motes[i].position.y - mvy1 + mvx2 );
+					glVertex2f ( motes[i].position.x - mvx, motes[i].position.y - mvy );
+					
+					glVertex2f ( motes[i].position.x + mvx, motes[i].position.y + mvy );
+					glVertex2f ( motes[i].position.x - mvx, motes[i].position.y - mvy );
+					glVertex2f ( motes[i].position.x - mvx1 + mvy2, motes[i].position.y - mvy1 - mvx2 );
+					glVertex2f ( motes[i].position.x + mvx1 + mvy2, motes[i].position.y + mvy1 - mvx2 );
+					
+				}
+			}
+			else
+			{
+				float scale1 = 1.0f / moteSize;
+				float scalex = 0.866f * scale1;
+				float scaley = 0.5f * scale1;
+				
+				for ( i = 0; i < numMotes; ++i )
+				{
+					float mv1 = motes[i].mass * scale1;
+					float mvx = motes[i].mass * scalex;
+					float mvy = motes[i].mass * scaley;
+					
+					glColor3f ( motes[i].colour.r,
+								motes[i].colour.g,
+								motes[i].colour.b );
+					
+					glVertex2f ( motes[i].position.x,  motes[i].position.y + mv1 );
+					glVertex2f ( motes[i].position.x - mvx, motes[i].position.y + mvy );
+					glVertex2f ( motes[i].position.x - mvx, motes[i].position.y - mvy );
+					glVertex2f ( motes[i].position.x,  motes[i].position.y - mv1 );
+
+					glVertex2f ( motes[i].position.x,  motes[i].position.y + mv1 );
+					glVertex2f ( motes[i].position.x,  motes[i].position.y - mv1 );
+					glVertex2f ( motes[i].position.x + mvx, motes[i].position.y - mvy );
+					glVertex2f ( motes[i].position.x + mvx, motes[i].position.y + mvy );
+			}		
+			}
+			break;
+		}
+	}
 	glEnd ();
     
 	// that's all folks
@@ -869,6 +1006,11 @@
     [screensBox setIntValue: mainScreenOnly];
     [logoImage setImage:logoImageSrc];
 	[sizeSlider setIntValue: (moteSize > 19 ? DEFAULT_MOTE_SIZE : (moteSize < 1 ? DEFAULT_MOTE_SIZE : (20 - moteSize)))];
+	[directionalButton setIntValue: directional];
+	
+	[squareButton setIntValue: (moteShape == MOTE_SQUARE)];
+	[diamondButton setIntValue: (moteShape == MOTE_DIAMOND)];
+	[hexButton setIntValue: (moteShape == MOTE_HEXAGON)];
     
     reinitMotes = NO;
     
@@ -934,6 +1076,15 @@
 	newValue = [sizeSlider intValue];
 	
 	moteSize = newValue > 19 ? DEFAULT_MOTE_SIZE : (newValue < 1 ? DEFAULT_MOTE_SIZE : 20 - newValue );
+	
+	directional = ([directionalButton intValue] != 0);
+	
+	if ( [squareButton intValue] )
+		moteShape = MOTE_SQUARE;
+	else if ( [diamondButton intValue] )
+		moteShape = MOTE_DIAMOND;
+	else
+		moteShape = MOTE_HEXAGON;
     
     // close the window
     [NSApp endSheet:window];
