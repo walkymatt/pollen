@@ -1,0 +1,378 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 34;
+	objects = {
+		014CEA410018CDE011CA2923 = {
+			isa = PBXBundleReference;
+			path = Pollen.saver;
+			refType = 4;
+		};
+		014CEA420018CDE011CA2923 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = NO;
+				OPTIMIZATION_CFLAGS = "-O0";
+			};
+			isa = PBXBuildStyle;
+			name = Development;
+		};
+		014CEA430018CDE011CA2923 = {
+			buildRules = (
+			);
+			buildSettings = {
+				COPY_PHASE_STRIP = YES;
+			};
+			isa = PBXBuildStyle;
+			name = Deployment;
+		};
+//010
+//011
+//012
+//013
+//014
+//080
+//081
+//082
+//083
+//084
+		089C1669FE841209C02AAC07 = {
+			buildStyles = (
+				014CEA420018CDE011CA2923,
+				014CEA430018CDE011CA2923,
+			);
+			isa = PBXProject;
+			mainGroup = 089C166AFE841209C02AAC07;
+			projectDirPath = "";
+			targets = (
+				089C1673FE841209C02AAC07,
+			);
+		};
+		089C166AFE841209C02AAC07 = {
+			children = (
+				08FB77AFFE84173DC02AAC07,
+				089C167CFE841241C02AAC07,
+				089C1671FE841209C02AAC07,
+				19C28FB8FE9D52D311CA2CBB,
+			);
+			isa = PBXGroup;
+			name = dust;
+			refType = 4;
+		};
+		089C1671FE841209C02AAC07 = {
+			children = (
+				1058C7ACFEA557BF11CA2CBB,
+				1058C7AEFEA557BF11CA2CBB,
+			);
+			isa = PBXGroup;
+			name = "Frameworks and Libraries";
+			refType = 4;
+		};
+		089C1672FE841209C02AAC07 = {
+			isa = PBXFrameworkReference;
+			name = Foundation.framework;
+			path = /System/Library/Frameworks/Foundation.framework;
+			refType = 0;
+		};
+		089C1673FE841209C02AAC07 = {
+			buildPhases = (
+				089C1674FE841209C02AAC07,
+				089C1675FE841209C02AAC07,
+				089C1676FE841209C02AAC07,
+				089C1677FE841209C02AAC07,
+				089C1679FE841209C02AAC07,
+			);
+			buildSettings = {
+				DEBUGGING_SYMBOLS = NO;
+				FRAMEWORK_SEARCH_PATHS = "";
+				HEADER_SEARCH_PATHS = "";
+				INSTALL_PATH = "$(HOME)/Library/Screen Savers";
+				LIBRARY_SEARCH_PATHS = "";
+				OPTIMIZATION_CFLAGS = "-O3";
+				OTHER_CFLAGS = "";
+				OTHER_LDFLAGS = "";
+				OTHER_REZFLAGS = "";
+				PRODUCT_NAME = Pollen;
+				SECTORDER_FLAGS = "";
+				WARNING_CFLAGS = "-Wmost -Wno-four-char-constants -Wno-unknown-pragmas";
+				WRAPPER_EXTENSION = saver;
+			};
+			dependencies = (
+			);
+			isa = PBXBundleTarget;
+			name = dust;
+			productInstallPath = "$(HOME)/Library/Screen Savers";
+			productName = dust;
+			productReference = 014CEA410018CDE011CA2923;
+			productSettingsXML = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>
+<!DOCTYPE plist SYSTEM \"file://localhost/System/Library/DTDs/PropertyList.dtd\">
+<plist version=\"0.9\">
+<dict>
+	<key>CFBundleDevelopmentRegion</key>
+	<string>English</string>
+	<key>CFBundleExecutable</key>
+	<string>Pollen</string>
+	<key>CFBundleIconFile</key>
+	<string></string>
+	<key>CFBundleIdentifier</key>
+	<string></string>
+	<key>CFBundleInfoDictionaryVersion</key>
+	<string>6.0</string>
+	<key>CFBundlePackageType</key>
+	<string>BNDL</string>
+	<key>CFBundleSignature</key>
+	<string>????</string>
+	<key>CFBundleVersion</key>
+	<string>0.92b</string>
+	<key>NSPrincipalClass</key>
+	<string></string>
+</dict>
+</plist>
+";
+			shouldUseHeadermap = 1;
+		};
+		089C1674FE841209C02AAC07 = {
+			buildActionMask = 2147483647;
+			files = (
+				F5583188010C56B901000001,
+				F558318C010C618A01000001,
+			);
+			isa = PBXHeadersBuildPhase;
+			name = Headers;
+		};
+		089C1675FE841209C02AAC07 = {
+			buildActionMask = 2147483647;
+			files = (
+				089C1680FE841241C02AAC07,
+				F53B29B7010BBFC001000001,
+				F51B8BBB0111C51D01000001,
+			);
+			isa = PBXResourcesBuildPhase;
+			name = "Bundle Resources";
+		};
+		089C1676FE841209C02AAC07 = {
+			buildActionMask = 2147483647;
+			files = (
+				F5583189010C56B901000001,
+			);
+			isa = PBXSourcesBuildPhase;
+			name = Sources;
+		};
+		089C1677FE841209C02AAC07 = {
+			buildActionMask = 2147483647;
+			files = (
+				1058C7AFFEA557BF11CA2CBB,
+				F53B29B2010BAC1001000001,
+				F53B29B4010BAD5E01000001,
+			);
+			isa = PBXFrameworksBuildPhase;
+			name = "Frameworks & Libraries";
+		};
+		089C1679FE841209C02AAC07 = {
+			buildActionMask = 2147483647;
+			files = (
+			);
+			isa = PBXRezBuildPhase;
+			name = "ResourceManager Resources";
+		};
+		089C167CFE841241C02AAC07 = {
+			children = (
+				F53B29B6010BBFC001000001,
+				089C167DFE841241C02AAC07,
+				F51B8BBA0111C51D01000001,
+			);
+			isa = PBXGroup;
+			name = Resources;
+			refType = 4;
+		};
+		089C167DFE841241C02AAC07 = {
+			children = (
+				089C167EFE841241C02AAC07,
+			);
+			isa = PBXVariantGroup;
+			name = InfoPlist.strings;
+			refType = 4;
+		};
+		089C167EFE841241C02AAC07 = {
+			fileEncoding = 10;
+			isa = PBXFileReference;
+			name = English;
+			path = English.lproj/InfoPlist.strings;
+			refType = 4;
+		};
+		089C167FFE841241C02AAC07 = {
+			isa = PBXFrameworkReference;
+			name = AppKit.framework;
+			path = /System/Library/Frameworks/AppKit.framework;
+			refType = 0;
+		};
+		089C1680FE841241C02AAC07 = {
+			fileRef = 089C167DFE841241C02AAC07;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		08FB77AFFE84173DC02AAC07 = {
+			children = (
+				F5583186010C56B901000001,
+				F5583187010C56B901000001,
+				F558318A010C618A01000001,
+			);
+			isa = PBXGroup;
+			name = Classes;
+			refType = 4;
+		};
+//080
+//081
+//082
+//083
+//084
+//100
+//101
+//102
+//103
+//104
+		1058C7ACFEA557BF11CA2CBB = {
+			children = (
+				F53B29B1010BAC1001000001,
+				1058C7ADFEA557BF11CA2CBB,
+				F53B29B3010BAD5E01000001,
+			);
+			isa = PBXGroup;
+			name = "Linked Frameworks";
+			refType = 4;
+		};
+		1058C7ADFEA557BF11CA2CBB = {
+			isa = PBXFrameworkReference;
+			name = Cocoa.framework;
+			path = /System/Library/Frameworks/Cocoa.framework;
+			refType = 0;
+		};
+		1058C7AEFEA557BF11CA2CBB = {
+			children = (
+				089C1672FE841209C02AAC07,
+				089C167FFE841241C02AAC07,
+			);
+			isa = PBXGroup;
+			name = "Other Frameworks";
+			refType = 4;
+		};
+		1058C7AFFEA557BF11CA2CBB = {
+			fileRef = 1058C7ADFEA557BF11CA2CBB;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+//100
+//101
+//102
+//103
+//104
+//190
+//191
+//192
+//193
+//194
+		19C28FB8FE9D52D311CA2CBB = {
+			children = (
+				014CEA410018CDE011CA2923,
+			);
+			isa = PBXGroup;
+			name = Products;
+			refType = 4;
+		};
+//190
+//191
+//192
+//193
+//194
+//F50
+//F51
+//F52
+//F53
+//F54
+		F51B8BBA0111C51D01000001 = {
+			isa = PBXFileReference;
+			path = pollen.pict;
+			refType = 4;
+		};
+		F51B8BBB0111C51D01000001 = {
+			fileRef = F51B8BBA0111C51D01000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53B29B1010BAC1001000001 = {
+			isa = PBXFrameworkReference;
+			name = ScreenSaver.framework;
+			path = /System/Library/Frameworks/ScreenSaver.framework;
+			refType = 0;
+		};
+		F53B29B2010BAC1001000001 = {
+			fileRef = F53B29B1010BAC1001000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53B29B3010BAD5E01000001 = {
+			isa = PBXFrameworkReference;
+			name = OpenGL.framework;
+			path = /System/Library/Frameworks/OpenGL.framework;
+			refType = 0;
+		};
+		F53B29B4010BAD5E01000001 = {
+			fileRef = F53B29B3010BAD5E01000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F53B29B6010BBFC001000001 = {
+			isa = PBXFileReference;
+			path = dust.nib;
+			refType = 4;
+		};
+		F53B29B7010BBFC001000001 = {
+			fileRef = F53B29B6010BBFC001000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5583186010C56B901000001 = {
+			isa = PBXFileReference;
+			path = Dust.h;
+			refType = 4;
+		};
+		F5583187010C56B901000001 = {
+			isa = PBXFileReference;
+			path = Dust.m;
+			refType = 4;
+		};
+		F5583188010C56B901000001 = {
+			fileRef = F5583186010C56B901000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F5583189010C56B901000001 = {
+			fileRef = F5583187010C56B901000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+		F558318A010C618A01000001 = {
+			isa = PBXFileReference;
+			path = DustMote.h;
+			refType = 4;
+		};
+		F558318C010C618A01000001 = {
+			fileRef = F558318A010C618A01000001;
+			isa = PBXBuildFile;
+			settings = {
+			};
+		};
+	};
+	rootObject = 089C1669FE841209C02AAC07;
+}

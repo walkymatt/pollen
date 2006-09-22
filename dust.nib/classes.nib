@@ -1,0 +1,21 @@
+{
+    IBClasses = (
+        {
+            ACTIONS = {chooseLogo = id; closeSheet = id; defaultLogo = id; noLogo = id; }; 
+            CLASS = Dust; 
+            LANGUAGE = ObjC; 
+            OUTLETS = {
+                coloursBox = id; 
+                logoImage = id; 
+                motesSlider = id; 
+                screensBox = id; 
+                tailsBox = id; 
+                window = id; 
+            }; 
+            SUPERCLASS = ScreenSaverView; 
+        }, 
+        {CLASS = FirstResponder; LANGUAGE = ObjC; SUPERCLASS = NSObject; }, 
+        {CLASS = ScreenSaverView; LANGUAGE = ObjC; SUPERCLASS = NSView; }
+    ); 
+    IBVersion = 1; 
+}
