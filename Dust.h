@@ -87,6 +87,10 @@ enum
     // use colours from the logo image?
     BOOL	useLogoColours;
     
+    // minimum contrast required for a pixel to be
+    // accepted as non-background
+    float	minimumContrast;
+    
     // used and actual sizes of the motes array
     int		numMotes;
     int		numMotesAllocated;
@@ -127,6 +131,7 @@ enum
 
     // controls in the configuration dialog
     IBOutlet id coloursBox;
+    IBOutlet id contrastBox;
     IBOutlet id logoImage;
     IBOutlet id motesSlider;
     IBOutlet id screensBox;

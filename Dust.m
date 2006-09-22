@@ -12,6 +12,9 @@
 #define FORCE_MAX 50.0
 #define MIN_NON_BG_PIXELS 50
 
+#define CONTRAST_OFF 0.0f
+#define CONTRAST_ON 0.5f
+
 #define DEFAULT_LOGO @"pollen.pict"
 
 @implementation Dust
@@ -254,6 +257,8 @@
     drawMode = [prefs integerForKey:@"drawMode"];
     useLogoColours = [prefs boolForKey:@"useLogoColours"];
     
+    minimumContrast = [prefs boolForKey:@"contrastCheck"] ? CONTRAST_ON : CONTRAST_OFF;
+    
     // remaining details are, after some consideration, not configurable
     smoothness = SMOOTHNESS;    
     bg.r = bg.g = bg.b = 0.0f;
@@ -273,6 +278,7 @@
     [prefs setInteger:logoMode forKey:@"logoMode"];
     [prefs setBool:useLogoColours forKey:@"useLogoColours"];
     [prefs setBool:mainScreenOnly forKey:@"mainScreenOnly"];
+    [prefs setBool:(minimumContrast > CONTRAST_OFF) forKey:@"contrastCheck"];
     
     if ( logoMode == LOGO_CUSTOM && logoFile != nil )
         [prefs setObject:logoFile forKey:@"logoFile"];
@@ -363,6 +369,7 @@
     int bytesPerRow = [bitmap bytesPerRow];
     Colour3f* result;
     Colour3f* dest;
+    float distance;
     unsigned char* src;
     int x, y;
     
@@ -392,11 +399,19 @@
                 dest->g = ((float) src[1])/255.0;
                 dest->b = ((float) src[2])/255.0;
                 
+                distance = ( (dest->r - result->r) * (dest->r - result->r)
+                             + (dest->g - result->r) * (dest->g - result->r)
+                             + (dest->b - result->b) * (dest->b - result->b) );
+                
                 // check to see if it's a non-bg pixel
-                if ( dest->r != result->r
-                     || dest->g != result->g
-                     || dest->b != result->b )
+                if ( distance > minimumContrast )
                     ++numNonBGPixels;
+                else
+                {
+                    dest->r = result->r;
+                    dest->g = result->g;
+                    dest->b = result->b;
+                }
                     
                 ++dest;
                 src += 4;
@@ -414,11 +429,19 @@
                 dest->g = ((float) src[1])/255.0;
                 dest->b = ((float) src[2])/255.0;
                 
+                distance = ( (dest->r - result->r) * (dest->r - result->r)
+                             + (dest->g - result->r) * (dest->g - result->r)
+                             + (dest->b - result->b) * (dest->b - result->b) );
+                
                 // check to see if it's a non-bg pixel
-                if ( dest->r != result->r
-                     || dest->g != result->g
-                     || dest->b != result->b )
+                if ( distance > minimumContrast )
                     ++numNonBGPixels;
+                else
+                {
+                    dest->r = result->r;
+                    dest->g = result->g;
+                    dest->b = result->b;
+                }
                     
                 ++dest;
                 src += 3;
@@ -823,6 +846,7 @@
     [motesSlider setIntValue: numMotes];
     [tailsBox setIntValue: (drawMode == DRAW_LINES)];
     [coloursBox setIntValue: useLogoColours];
+    [contrastBox setIntValue: (minimumContrast > CONTRAST_OFF)];
     [screensBox setIntValue: mainScreenOnly];
     [logoImage setImage:logoImageSrc];
     
@@ -876,6 +900,13 @@
         reinitMotes = YES;
     }
     
+    newValue = ([contrastBox intValue] != 0);
+    if ( newValue != (minimumContrast > CONTRAST_OFF) )
+    {
+        minimumContrast = newValue ? CONTRAST_ON : CONTRAST_OFF;
+        reinitMotes = YES;
+    }
+    
     mainScreenOnly = ([screensBox intValue] != 0);
     
     drawMode = ( [tailsBox intValue] ? DRAW_LINES : DRAW_POINTS );
@@ -907,14 +938,14 @@
     // #### bring up a file open dialog and wait
     // #### for a choice
     int result;
-    NSArray* fileTypes = [NSArray arrayWithObjects:@"jpg", @"pict", @"bmp", @"tiff", @"gif", nil];
+    NSArray* fileTypes = [NSImage imageFileTypes];
     NSOpenPanel* panel = [NSOpenPanel openPanel];
     
     result = [panel runModalForDirectory:NSHomeDirectory() file:nil types:fileTypes];
     
     if ( result == NSOKButton )
     {
-        logoFile = [panel filename];
+        logoFile = [[panel filename] copyWithZone:nil];
     
         // set the resulting image file as the preferred logo
         [self loadLogo];
