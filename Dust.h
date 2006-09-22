@@ -94,6 +94,9 @@ enum
     // used and actual sizes of the motes array
     int		numMotes;
     int		numMotesAllocated;
+	
+	// size of an individual mote
+	int		moteSize;
     
     // the array of motes
     DustMote*	motes;
@@ -135,7 +138,8 @@ enum
     IBOutlet id logoImage;
     IBOutlet id motesSlider;
     IBOutlet id screensBox;
-    IBOutlet id tailsBox;
+	IBOutlet id sizeSlider;
+	IBOutlet id tailsBox;
     IBOutlet id window;
 }
 

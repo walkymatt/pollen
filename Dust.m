@@ -11,9 +11,12 @@
 #define SWARM_FORCE 12.0
 #define FORCE_MAX 50.0
 #define MIN_NON_BG_PIXELS 50
+#define DEFAULT_MOTE_SIZE 10
 
 #define CONTRAST_OFF 0.0f
 #define CONTRAST_ON 0.5f
+
+#define radify(x) (x)*M_PI/180.0
 
 #define DEFAULT_LOGO @"pollen.pict"
 
@@ -32,13 +35,12 @@
     // initialize preferences from saved
     [self loadPrefs];
     
+		
     // initialize OpenGL display environment
     if ( self )
     {
         // only draw in preview mode or when we are on the main screen
-        if ( preview
-             || !mainScreenOnly
-             || ( frameRect.origin.x == 0 && frameRect.origin.y == 0 ) )
+        if ( preview || !mainScreenOnly || ( frameRect.origin.x == 0 && frameRect.origin.y == 0 ) )
         {
             NSOpenGLPixelFormatAttribute attribs[] =
             {
@@ -60,14 +62,12 @@
             
             drawingEnabled = YES;
             
-            _view =
-            [
-                [
-                    [NSOpenGLView alloc]
-                    initWithFrame:NSZeroRect pixelFormat:format
-                ]
-                autorelease
-            ];
+            _view =[[[NSOpenGLView alloc] initWithFrame:NSZeroRect pixelFormat:format] autorelease];
+			NSOpenGLContext *ctx = [_view openGLContext];
+			[ctx makeCurrentContext];
+			long VBL = 1;
+			[ctx setValues:&VBL forParameter:NSOpenGLCPSwapInterval];
+
             [self addSubview:_view];
         
             if ( logoFile != nil )
@@ -246,6 +246,10 @@
     numMotes = [prefs integerForKey:@"numMotes"];
     if ( numMotes <= 0 )
         numMotes = NUM_MOTES;
+	
+	moteSize = [prefs integerForKey:@"moteSize"];
+	if ( moteSize <= 0 )
+		moteSize = DEFAULT_MOTE_SIZE;
     
     mainScreenOnly = [prefs boolForKey:@"mainScreenOnly"];
     
@@ -279,6 +283,7 @@
     [prefs setInteger:numMotes forKey:@"numMotes"];
     [prefs setInteger:drawMode forKey:@"drawMode"];
     [prefs setInteger:logoMode forKey:@"logoMode"];
+	[prefs setInteger:moteSize forKey:@"moteSize"];
     [prefs setBool:useLogoColours forKey:@"useLogoColours"];
     [prefs setBool:mainScreenOnly forKey:@"mainScreenOnly"];
     [prefs setBool:(minimumContrast > CONTRAST_OFF) forKey:@"contrastCheck"];
@@ -752,7 +757,7 @@
 - (void) drawMotes
 {
     int i = 0;
-    
+	
     // clear the screen
     glClearColor ( bg.r, bg.g, bg.b, 1.0 );
     glClear ( GL_COLOR_BUFFER_BIT );
@@ -770,38 +775,49 @@
     // are positioned appropriately within pixel boundaries
     glTranslatef( 0.375f, 0.375f, 0.0f );
     
-    // draw tails if so requested
-    if ( drawMode == DRAW_LINES )
+    // draw tails if so requested and motesize makes it worth bothering
+	// changed methods to send stuff in larger batches
+    if ( drawMode == DRAW_LINES && moteSize > 5 )
     {
+		glBegin ( GL_LINES );
         for ( i = 0; i < numMotes; ++i )
         {
             glLineWidth ( motes[i].mass / 10 );
-            glBegin ( GL_LINES );
+            
             glColor3f ( (motes[i].colour.r + bg.r) / 2.0,
-                        (motes[i].colour.g + bg.g) / 2.0,
+						(motes[i].colour.g + bg.g) / 2.0,
                         (motes[i].colour.b + bg.b) / 2.0 );
             glVertex2f ( motes[i].position.x,
                          motes[i].position.y );
             glVertex2f ( motes[i].previous.x,
                          motes[i].previous.y );
-            glEnd ();
+            
         }
+		glEnd ();
     }
     
-    // always draw motes
-    for ( i = 0; i < numMotes; ++i )
+    // always draw motes	
+	glBegin ( GL_QUADS);
+	for ( i = 0; i < numMotes; ++i )
     {
-        glPointSize ( motes[i].mass / 10 );
-        glBegin ( GL_POINTS );
+		float v2 = motes[i].velocity.x * motes[i].velocity.x + motes[i].velocity.y * motes[i].velocity.y;
+		float modv = sqrt(v2);
+		float mvx = (motes[i].velocity.x * motes[i].mass) / (modv * moteSize);
+		float mvy = (motes[i].velocity.y * motes[i].mass) / (modv * moteSize);
+		float mvx2 = mvx/1.5;
+		float mvy2 = mvy/1.5;
+        
         glColor3f ( motes[i].colour.r,
                     motes[i].colour.g,
                     motes[i].colour.b );
-        glVertex2f ( motes[i].position.x,
-                     motes[i].position.y );
-        glEnd ();
+        glVertex2f ( motes[i].position.x + mvx,  motes[i].position.y + mvy );
+		glVertex2f ( motes[i].position.x + mvy2, motes[i].position.y - mvx2 );
+		glVertex2f ( motes[i].position.x - mvx,  motes[i].position.y - mvy );
+		glVertex2f ( motes[i].position.x - mvy2, motes[i].position.y + mvx2 );
     }
+	glEnd ();
     
-    // that's all folks
+	// that's all folks
     glFlush();
 }
 
@@ -852,6 +868,7 @@
     [contrastBox setIntValue: (minimumContrast > CONTRAST_OFF)];
     [screensBox setIntValue: mainScreenOnly];
     [logoImage setImage:logoImageSrc];
+	[sizeSlider setIntValue: (moteSize > 19 ? DEFAULT_MOTE_SIZE : (moteSize < 1 ? DEFAULT_MOTE_SIZE : (20 - moteSize)))];
     
     reinitMotes = NO;
     
@@ -895,7 +912,7 @@
     {
         numMotes = newValue;
     }
-    
+	    
     newValue = ([coloursBox intValue] != 0);
     if ( newValue != useLogoColours )
     {
@@ -913,6 +930,10 @@
     mainScreenOnly = ([screensBox intValue] != 0);
     
     drawMode = ( [tailsBox intValue] ? DRAW_LINES : DRAW_POINTS );
+
+	newValue = [sizeSlider intValue];
+	
+	moteSize = newValue > 19 ? DEFAULT_MOTE_SIZE : (newValue < 1 ? DEFAULT_MOTE_SIZE : 20 - newValue );
     
     // close the window
     [NSApp endSheet:window];
