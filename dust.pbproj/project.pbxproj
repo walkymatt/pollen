@@ -6,7 +6,7 @@
 	objectVersion = 39;
 	objects = {
 		014CEA410018CDE011CA2923 = {
-			expectedFileType = folder;
+			explicitFileType = wrapper.cfbundle;
 			fallbackIsa = PBXFileReference;
 			isa = PBXBundleReference;
 			path = Pollen.saver;
@@ -87,9 +87,9 @@
 			sourceTree = "<group>";
 		};
 		089C1672FE841209C02AAC07 = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = Foundation.framework;
 			path = /System/Library/Frameworks/Foundation.framework;
 			refType = 0;
@@ -216,18 +216,18 @@
 			sourceTree = "<group>";
 		};
 		089C167EFE841241C02AAC07 = {
-			expectedFileType = text.plist.strings;
 			fileEncoding = 10;
 			isa = PBXFileReference;
+			lastKnownFileType = text.plist.strings;
 			name = English;
 			path = English.lproj/InfoPlist.strings;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		089C167FFE841241C02AAC07 = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = AppKit.framework;
 			path = /System/Library/Frameworks/AppKit.framework;
 			refType = 0;
@@ -272,9 +272,9 @@
 			sourceTree = "<group>";
 		};
 		1058C7ADFEA557BF11CA2CBB = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = Cocoa.framework;
 			path = /System/Library/Frameworks/Cocoa.framework;
 			refType = 0;
@@ -326,8 +326,8 @@
 //F53
 //F54
 		F51B8BBA0111C51D01000001 = {
-			expectedFileType = image.pict;
 			isa = PBXFileReference;
+			lastKnownFileType = image.pict;
 			path = pollen.pict;
 			refType = 4;
 			sourceTree = "<group>";
@@ -339,9 +339,9 @@
 			};
 		};
 		F53B29B1010BAC1001000001 = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = ScreenSaver.framework;
 			path = /System/Library/Frameworks/ScreenSaver.framework;
 			refType = 0;
@@ -354,9 +354,9 @@
 			};
 		};
 		F53B29B3010BAD5E01000001 = {
-			expectedFileType = wrapper.framework;
 			fallbackIsa = PBXFileReference;
 			isa = PBXFrameworkReference;
+			lastKnownFileType = wrapper.framework;
 			name = OpenGL.framework;
 			path = /System/Library/Frameworks/OpenGL.framework;
 			refType = 0;
@@ -369,8 +369,8 @@
 			};
 		};
 		F53B29B6010BBFC001000001 = {
-			expectedFileType = wrapper.nib;
 			isa = PBXFileReference;
+			lastKnownFileType = wrapper.nib;
 			path = dust.nib;
 			refType = 4;
 			sourceTree = "<group>";
@@ -382,17 +382,17 @@
 			};
 		};
 		F5583186010C56B901000001 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = Dust.h;
 			refType = 4;
 			sourceTree = "<group>";
 		};
 		F5583187010C56B901000001 = {
-			expectedFileType = sourcecode.c.objc;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.objc;
 			path = Dust.m;
 			refType = 4;
 			sourceTree = "<group>";
@@ -410,9 +410,9 @@
 			};
 		};
 		F558318A010C618A01000001 = {
-			expectedFileType = sourcecode.c.h;
 			fileEncoding = 30;
 			isa = PBXFileReference;
+			lastKnownFileType = sourcecode.c.h;
 			path = DustMote.h;
 			refType = 4;
 			sourceTree = "<group>";

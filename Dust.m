@@ -207,18 +207,21 @@
     [_view setFrameSize:newSize];
     _initedGL = 0;
     
-    fieldHeight = newSize.height / FIELDS_DOWN;
-    fieldWidth = newSize.width / FIELDS_ACROSS;
-    displayWidth = newSize.width;
-    displayHeight = newSize.height;
-    
-    // now that we know the display size, we can initialize the motes
-    for ( ; i < numMotes; ++i )
-        [self initMote:i];  
-        
-    // set the background colour if necessary
-    if ( logo != nil && useLogoColours )
-        bg = *logo;
+	if ( drawingEnabled )
+	{
+		fieldHeight = newSize.height / FIELDS_DOWN;
+		fieldWidth = newSize.width / FIELDS_ACROSS;
+		displayWidth = newSize.width;
+		displayHeight = newSize.height;
+		
+		// now that we know the display size, we can initialize the motes
+		for ( ; i < numMotes; ++i )
+			[self initMote:i];  
+			
+		// set the background colour if necessary
+		if ( logo != nil && useLogoColours )
+			bg = *logo;
+	}
 }
 
 //---------------------------------------------------------------------------------

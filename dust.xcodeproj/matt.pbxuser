@@ -1,21 +1,22 @@
 // !$*UTF8*$!
 {
-	089C1669FE841209C02AAC07 = {
-		activeBuildStyle = 014CEA430018CDE011CA2923;
-		activeTarget = 089C1673FE841209C02AAC07;
+	089C1669FE841209C02AAC07 /* Project object */ = {
+		activeBuildConfigurationName = Development;
+		activeBuildStyle = 014CEA420018CDE011CA2923 /* Development */;
+		activeTarget = 089C1673FE841209C02AAC07 /* dust */;
 		addToTargets = (
-			089C1673FE841209C02AAC07,
+			089C1673FE841209C02AAC07 /* dust */,
 		);
 		breakpoints = (
 		);
-		codeSenseManager = C9EE0AE905669D3600AA8FF4;
+		codeSenseManager = C9EE0AE905669D3600AA8FF4 /* Code sense */;
 		perUserDictionary = {
 			PBXConfiguration.PBXFileTableDataSource3.PBXFileTableDataSource = {
 				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
 				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
 				PBXFileTableDataSourceColumnWidthsKey = (
 					20,
-					190,
+					262,
 					20,
 					39,
 					43,
@@ -48,7 +49,29 @@
 					PBXSymbolsDataSource_ReferenceNameID,
 				);
 			};
-			PBXPerProjectTemplateStateSaveDate = 100099136;
+			PBXConfiguration.PBXTargetDataSource.PBXTargetDataSource = {
+				PBXFileTableDataSourceColumnSortingDirectionKey = "-1";
+				PBXFileTableDataSourceColumnSortingKey = PBXFileDataSource_Filename_ColumnID;
+				PBXFileTableDataSourceColumnWidthsKey = (
+					20,
+					200,
+					73,
+					20,
+					48,
+					43,
+					43,
+				);
+				PBXFileTableDataSourceColumnsKey = (
+					PBXFileDataSource_FiletypeID,
+					PBXFileDataSource_Filename_ColumnID,
+					PBXTargetDataSource_PrimaryAttribute,
+					PBXFileDataSource_Built_ColumnID,
+					PBXFileDataSource_ObjectSize_ColumnID,
+					PBXFileDataSource_Errors_ColumnID,
+					PBXFileDataSource_Warnings_ColumnID,
+				);
+			};
+			PBXPerProjectTemplateStateSaveDate = 154737004;
 			PBXPrepackagedSmartGroups_v2 = (
 				{
 					PBXTransientLocationAtTop = bottom;
@@ -400,16 +423,16 @@
 				Frame = "{{0, 0}, {745, 442}}";
 				WindowFrame = "{{203, 266}, {745, 464}}";
 			};
-			PBXWorkspaceStateSaveDate = 100099136;
+			PBXWorkspaceStateSaveDate = 154737004;
 		};
-		sourceControlManager = C9EE0AE805669D3600AA8FF4;
+		sourceControlManager = C9EE0AE805669D3600AA8FF4 /* Source Control */;
 		userBuildSettings = {
 		};
 	};
-	089C1673FE841209C02AAC07 = {
+	089C1673FE841209C02AAC07 /* dust */ = {
 		activeExec = 0;
 	};
-	089C167EFE841241C02AAC07 = {
+	089C167EFE841241C02AAC07 /* English */ = {
 		uiCtxt = {
 			sepNavIntBoundsRect = "{{0, 0}, {711, 428}}";
 			sepNavSelRange = "{266, 0}";
@@ -417,45 +440,40 @@
 			sepNavWindowFrame = "{{61, 141}, {750, 558}}";
 		};
 	};
-	C9EE0AE805669D3600AA8FF4 = {
+	C9EE0AE805669D3600AA8FF4 /* Source Control */ = {
 		isa = PBXSourceControlManager;
+		fallbackIsa = XCSourceControlManager;
+		isSCMEnabled = 0;
 		scmConfiguration = {
 		};
 		scmType = scm.cvs;
 	};
-	C9EE0AE905669D3600AA8FF4 = {
-		indexTemplatePath = "";
+	C9EE0AE905669D3600AA8FF4 /* Code sense */ = {
 		isa = PBXCodeSenseManager;
-		usesDefaults = 1;
-		wantsCodeCompletion = 1;
-		wantsCodeCompletionAutoPopup = 0;
-		wantsCodeCompletionAutoSuggestions = 0;
-		wantsCodeCompletionCaseSensitivity = 1;
-		wantsCodeCompletionOnlyMatchingItems = 1;
-		wantsCodeCompletionParametersIncluded = 1;
-		wantsCodeCompletionPlaceholdersInserted = 1;
-		wantsCodeCompletionTabCompletes = 1;
-		wantsIndex = 1;
+		indexTemplatePath = "";
 	};
-	F5583186010C56B901000001 = {
+	F5583186010C56B901000001 /* Dust.h */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {667, 3163}}";
+			sepNavIntBoundsRect = "{{0, 0}, {667, 3164}}";
 			sepNavSelRange = "{1269, 0}";
-			sepNavVisRect = "{{0, 754}, {667, 462}}";
-			sepNavWindowFrame = "{{435, 154}, {706, 592}}";
+			sepNavVisRect = "{{0, 2701}, {667, 463}}";
+			sepNavWindowFrame = "{{4, 279}, {706, 592}}";
 		};
 	};
-	F5583187010C56B901000001 = {
+	F5583187010C56B901000001 /* Dust.m */ = {
 		uiCtxt = {
-			sepNavIntBoundsRect = "{{0, 0}, {728, 14153}}";
-			sepNavSelRange = "{6192, 8}";
-			sepNavVisRect = "{{0, 2773}, {711, 428}}";
-			sepNavWindowFrame = "{{29, 151}, {750, 558}}";
+			sepNavIntBoundsRect = "{{0, 0}, {728, 14154}}";
+			sepNavSelRange = "{176, 0}";
+			sepNavVisRect = "{{0, 4007}, {711, 745}}";
+			sepNavWindowFrame = "{{80, 4}, {750, 874}}";
 		};
 	};
-	F558318A010C618A01000001 = {
+	F558318A010C618A01000001 /* DustMote.h */ = {
 		uiCtxt = {
-			sepNavWindowFrame = "{{15, 239}, {750, 502}}";
+			sepNavIntBoundsRect = "{{0, 0}, {711, 602}}";
+			sepNavSelRange = "{0, 0}";
+			sepNavVisRect = "{{0, 0}, {711, 373}}";
+			sepNavWindowFrame = "{{15, 240}, {750, 502}}";
 		};
 	};
 }
