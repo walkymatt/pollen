@@ -64,7 +64,7 @@
             _view = [[[NSOpenGLView alloc] initWithFrame:NSZeroRect pixelFormat:format] autorelease];
 			NSOpenGLContext *ctx = [_view openGLContext];
 			[ctx makeCurrentContext];
-			long VBL = 1;
+			GLint VBL = 1;
 			[ctx setValues:&VBL forParameter:NSOpenGLCPSwapInterval];
 			
             [self addSubview:_view];
