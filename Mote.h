@@ -1,7 +1,9 @@
-// $Id$
-// Simple support structures for the Dust screensaver
-// Matthew Caldwell, 23 July 2001
-// Copyright (c) Cloak & Dagger Ltd <www.burn.demon.co.uk>
+//
+//  Mote.h
+//  pollen
+//
+//  Created by Matthew Caldwell on 23/07/2001.
+//  Copyright (c) 2001-2009. All rights reserved.
 
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
@@ -39,4 +41,4 @@ typedef struct
     Point2f	home;
     Colour3f	colour;
 }
-DustMote;
+Mote;

@@ -1,9 +1,12 @@
-// $Id$
-// Main Dust screensaver implementation
-// Matthew Caldwell, 23 July 2001
-// Copyright (c) Cloak & Dagger Ltd <www.burn.demon.co.uk>
+//
+//  Pollen.m
+//  pollen
+//
+//  Created by Matthew Caldwell on 04/09/2009.
+//  Copyright (c) 2001-2009. All rights reserved.
+//
 
-#import "Dust.h"
+#import "Pollen.h"
 #import <math.h>
 
 #define SMOOTHNESS 0.99f
@@ -20,27 +23,29 @@
 
 #define DEFAULT_LOGO @"pollen.pict"
 
-@implementation Dust
 
-//---------------------------------------------------------------------------------
-//  initialization
-//---------------------------------------------------------------------------------
 
-// initialize
-- (id)initWithFrame:(NSRect)frameRect isPreview:(BOOL)preview
+@implementation Pollen
+
++ (BOOL) performGammaFade
 {
-    // call the superclass
-    self = [super initWithFrame:frameRect isPreview:preview];
-    
-    // initialize preferences from saved
-    [self loadPrefs];
-    
-		
+	return YES;
+}
+
+#pragma mark Initialization
+
+- (id)initWithFrame:(NSRect)frame isPreview:(BOOL)preview
+{
+    self = [super initWithFrame:frame isPreview:preview];
+    	
     // initialize OpenGL display environment
     if ( self )
     {
+		// initialize preferences from saved
+		[self loadPrefs];
+		
         // only draw in preview mode or when we are on the main screen
-        if ( preview || !mainScreenOnly || ( frameRect.origin.x == 0 && frameRect.origin.y == 0 ) )
+        if ( preview || !mainScreenOnly || ( frame.origin.x == 0 && frame.origin.y == 0 ) )
         {
             NSOpenGLPixelFormatAttribute attribs[] =
             {
@@ -51,25 +56,19 @@
                 0
             };
             
-            NSOpenGLPixelFormat *format =
-            [
-                [
-                    [NSOpenGLPixelFormat alloc]
-                    initWithAttributes:attribs
-                ]
-                autorelease
-            ];
+            NSOpenGLPixelFormat *format
+				= [[[NSOpenGLPixelFormat alloc] initWithAttributes:attribs] autorelease];
             
             drawingEnabled = YES;
             
-            _view =[[[NSOpenGLView alloc] initWithFrame:NSZeroRect pixelFormat:format] autorelease];
+            _view = [[[NSOpenGLView alloc] initWithFrame:NSZeroRect pixelFormat:format] autorelease];
 			NSOpenGLContext *ctx = [_view openGLContext];
 			[ctx makeCurrentContext];
 			long VBL = 1;
 			[ctx setValues:&VBL forParameter:NSOpenGLCPSwapInterval];
-
+			
             [self addSubview:_view];
-        
+			
             if ( logoFile != nil )
                 [self loadLogo];
             
@@ -89,9 +88,6 @@
     return self;
 }
 
-//---------------------------------------------------------------------------------
-
-// initialize the vector field
 - (void) initVectorField
 {
     int i = 0;
@@ -132,16 +128,11 @@
     swirl[8].y = -5.0f;
 }
 
-//---------------------------------------------------------------------------------
-
-// allocate the motes array and init its contents
 - (void) allocateMotes
 {
-    motes = (DustMote*) malloc ( numMotes * sizeof ( DustMote ) );
+    motes = (Mote*) malloc ( numMotes * sizeof ( Mote ) );
     numMotesAllocated = numMotes;
 }
-
-//---------------------------------------------------------------------------------
 
 // initialize a single mote
 - (void) initMote:(int) index
@@ -169,8 +160,8 @@
             
             pixel = logo + logoIndex;
             if ( pixel->r != logo->r
-                 || pixel->g != logo->g
-                 || pixel->b != logo->b )
+				|| pixel->g != logo->g
+				|| pixel->b != logo->b )
             {
                 motes[index].home.x = logoX + (displayWidth - logoWidth)/2.0;
                 
@@ -196,9 +187,6 @@
     motes[index].velocity.x = motes[index].velocity.y = 0.0f;
 }
 
-//---------------------------------------------------------------------------------
-
-// adjust the frame size
 - (void) setFrameSize:(NSSize)newSize
 {
     int i = 0;
@@ -217,16 +205,13 @@
 		// now that we know the display size, we can initialize the motes
 		for ( ; i < numMotes; ++i )
 			[self initMote:i];  
-			
+		
 		// set the background colour if necessary
 		if ( logo != nil && useLogoColours )
 			bg = *logo;
 	}
 }
 
-//---------------------------------------------------------------------------------
-
-// initialize the OpenGL context
 - (void) initGL:(int) width :(int)height
 {
     glShadeModel ( GL_FLAT );
@@ -234,81 +219,6 @@
     glEnable ( GL_LINE_SMOOTH );
 }
 
-//---------------------------------------------------------------------------------
-
-// load preferences
-- (void) loadPrefs
-{
-    // load preferences object
-    prefs = [ScreenSaverDefaults defaultsForModuleWithName:@"Pollen"];
-    
-    // load individual preferences
-    numMotes = [prefs integerForKey:@"numMotes"];
-    if ( numMotes <= 0 )
-        numMotes = NUM_MOTES;
-	
-	moteSize = [prefs integerForKey:@"moteSize"];
-	if ( moteSize <= 0 )
-		moteSize = DEFAULT_MOTE_SIZE;
-    
-    mainScreenOnly = [prefs boolForKey:@"mainScreenOnly"];
-    
-    logoMode = [prefs integerForKey:@"logoMode"];
-    if ( logoMode == LOGO_DEFAULT )
-        logoFile = [[NSBundle bundleForClass: [Dust class]] pathForImageResource:DEFAULT_LOGO];
-    else if ( logoMode == LOGO_CUSTOM )
-        logoFile = [prefs stringForKey:@"logoFile"];
-    else
-        logoFile = nil;
-    
-    drawMode = [prefs integerForKey:@"drawMode"];
-    useLogoColours = [prefs boolForKey:@"useLogoColours"];
-    
-    minimumContrast = [prefs boolForKey:@"contrastCheck"] ? CONTRAST_ON : CONTRAST_OFF;
-	
-	moteShape = [prefs integerForKey:@"moteShape"];
-	if ( moteShape < MOTE_SQUARE || moteShape > MOTE_HEXAGON )
-	{
-		moteShape = MOTE_SQUARE;
-	}
-	
-	directional = [prefs boolForKey:@"directional"];
-    
-    // remaining details are, after some consideration, not configurable
-    smoothness = SMOOTHNESS;    
-    bg.r = bg.g = bg.b = 0.0f;
-    [self initPlayList];
-}
-
-//---------------------------------------------------------------------------------
-
-// save preferences
-- (void) savePrefs
-{
-    if ( prefs == nil )
-        return;
-    
-    [prefs setInteger:numMotes forKey:@"numMotes"];
-    [prefs setInteger:drawMode forKey:@"drawMode"];
-    [prefs setInteger:logoMode forKey:@"logoMode"];
-	[prefs setInteger:moteSize forKey:@"moteSize"];
-	[prefs setInteger:moteShape forKey:@"moteShape"];
-	[prefs setBool:directional forKey:@"directional"];
-    [prefs setBool:useLogoColours forKey:@"useLogoColours"];
-    [prefs setBool:mainScreenOnly forKey:@"mainScreenOnly"];
-    [prefs setBool:(minimumContrast > CONTRAST_OFF) forKey:@"contrastCheck"];
-    
-    if ( logoMode == LOGO_CUSTOM && logoFile != nil )
-        [prefs setObject:logoFile forKey:@"logoFile"];
-    else
-        [prefs removeObjectForKey:@"logoFile"];
-    
-    [prefs synchronize];
-}
-
-//---------------------------------------------------------------------------------
-
-// initialize the playlist
 - (void) initPlayList
 {
     playList[0] = MODE_DEFAULT;
@@ -339,9 +249,6 @@
     frameLimit = modeFrameLimits[MODE_DEFAULT];
 }
 
-//---------------------------------------------------------------------------------
-
-// load the logo image
 - (void) loadLogo
 {
     // attempt to load the logo image file
@@ -360,7 +267,7 @@
         logoHeight = 100;
         return;
     }
-
+	
     // get the image data in TIFF form
     tiffData = [logoImageSrc TIFFRepresentation];
     
@@ -375,9 +282,6 @@
     [logoBits release];
 }
 
-//---------------------------------------------------------------------------------
-
-// construct an array of colour records from a bitmap representation
 - (Colour3f*) getPixelColoursFromBitmapRep:(NSBitmapImageRep*)bitmap
 {
     int numPixels = logoWidth * logoHeight;
@@ -397,10 +301,10 @@
     // for the moment we require bitmap data in non-planar 24 or 32 bit RGB or RGBA
     // form -- more formats may be added later ####
     if ( ([bitmap bitsPerSample] != 8)
-         || [bitmap isPlanar]
-         || (bitsPerPixel < 24)
-         || (samplesPerPixel < 3))
-	return nil;
+		|| [bitmap isPlanar]
+		|| (bitsPerPixel < 24)
+		|| (samplesPerPixel < 3))
+		return nil;
     
     result = (Colour3f*) malloc (numPixels * sizeof(Colour3f));
     
@@ -418,8 +322,8 @@
                 dest->b = ((float) src[2])/255.0;
                 
                 distance = ( (dest->r - result->r) * (dest->r - result->r)
-                             + (dest->g - result->r) * (dest->g - result->r)
-                             + (dest->b - result->b) * (dest->b - result->b) );
+							+ (dest->g - result->r) * (dest->g - result->r)
+							+ (dest->b - result->b) * (dest->b - result->b) );
                 
                 // check to see if it's a non-bg pixel
                 if ( distance > minimumContrast )
@@ -430,7 +334,7 @@
                     dest->g = result->g;
                     dest->b = result->b;
                 }
-                    
+				
                 ++dest;
                 src += 4;
             }
@@ -448,8 +352,8 @@
                 dest->b = ((float) src[2])/255.0;
                 
                 distance = ( (dest->r - result->r) * (dest->r - result->r)
-                             + (dest->g - result->r) * (dest->g - result->r)
-                             + (dest->b - result->b) * (dest->b - result->b) );
+							+ (dest->g - result->r) * (dest->g - result->r)
+							+ (dest->b - result->b) * (dest->b - result->b) );
                 
                 // check to see if it's a non-bg pixel
                 if ( distance > minimumContrast )
@@ -460,7 +364,7 @@
                     dest->g = result->g;
                     dest->b = result->b;
                 }
-                    
+				
                 ++dest;
                 src += 3;
             }
@@ -470,11 +374,76 @@
     return result;
 }
 
-//---------------------------------------------------------------------------------
-//  drawing
-//---------------------------------------------------------------------------------
+#pragma mark Preferences
 
-// prepare to run the animation
+- (void) loadPrefs
+{
+    // load preferences object
+    prefs = [ScreenSaverDefaults defaultsForModuleWithName:@"Pollen"];
+    
+    // load individual preferences
+    numMotes = [prefs integerForKey:@"numMotes"];
+    if ( numMotes <= 0 )
+        numMotes = NUM_MOTES;
+	
+	moteSize = [prefs integerForKey:@"moteSize"];
+	if ( moteSize <= 0 )
+		moteSize = DEFAULT_MOTE_SIZE;
+    
+    mainScreenOnly = [prefs boolForKey:@"mainScreenOnly"];
+    
+    logoMode = [prefs integerForKey:@"logoMode"];
+    if ( logoMode == LOGO_DEFAULT )
+        logoFile = [[NSBundle bundleForClass: [Pollen class]] pathForImageResource:DEFAULT_LOGO];
+    else if ( logoMode == LOGO_CUSTOM )
+        logoFile = [prefs stringForKey:@"logoFile"];
+    else
+        logoFile = nil;
+    
+    drawMode = [prefs integerForKey:@"drawMode"];
+    useLogoColours = [prefs boolForKey:@"useLogoColours"];
+    
+    minimumContrast = [prefs boolForKey:@"contrastCheck"] ? CONTRAST_ON : CONTRAST_OFF;
+	
+	moteShape = [prefs integerForKey:@"moteShape"];
+	if ( moteShape < MOTE_SQUARE || moteShape > MOTE_HEXAGON )
+	{
+		moteShape = MOTE_SQUARE;
+	}
+	
+	directional = [prefs boolForKey:@"directional"];
+    
+    // remaining details are, after some consideration, not configurable
+    smoothness = SMOOTHNESS;    
+    bg.r = bg.g = bg.b = 0.0f;
+    [self initPlayList];
+}
+
+- (void) savePrefs
+{
+    if ( prefs == nil )
+        return;
+    
+    [prefs setInteger:numMotes forKey:@"numMotes"];
+    [prefs setInteger:drawMode forKey:@"drawMode"];
+    [prefs setInteger:logoMode forKey:@"logoMode"];
+	[prefs setInteger:moteSize forKey:@"moteSize"];
+	[prefs setInteger:moteShape forKey:@"moteShape"];
+	[prefs setBool:directional forKey:@"directional"];
+    [prefs setBool:useLogoColours forKey:@"useLogoColours"];
+    [prefs setBool:mainScreenOnly forKey:@"mainScreenOnly"];
+    [prefs setBool:(minimumContrast > CONTRAST_OFF) forKey:@"contrastCheck"];
+    
+    if ( logoMode == LOGO_CUSTOM && logoFile != nil )
+        [prefs setObject:logoFile forKey:@"logoFile"];
+    else
+        [prefs removeObjectForKey:@"logoFile"];
+    
+    [prefs synchronize];
+}
+
+#pragma mark Drawing
+
 - (void) startAnimation
 {
     if ( drawingEnabled )
@@ -488,13 +457,11 @@
         }
         
         [_view unlockFocus];
-        [super startAnimation];
     }
+
+	[super startAnimation];
 }
 
-//---------------------------------------------------------------------------------
-
-// draw a single frame of animation
 - (void) animateOneFrame
 {
     if ( drawingEnabled )
@@ -509,9 +476,6 @@
     }
 }
 
-//---------------------------------------------------------------------------------
-
-// switch between available modes from time to time
 - (void) checkModeChange
 {
     if ( playListSize > 1 )
@@ -523,9 +487,9 @@
             ++playListIndex;
             if ( playListIndex >= playListSize )
                 playListIndex = 0;
-                
+			
             mode = playList[playListIndex];
-    
+			
             // skip logo mode when no logo is in use
             if ( mode == MODE_LOGO && logoMode == LOGO_NONE )
             {
@@ -542,9 +506,6 @@
     }
 }
 
-//---------------------------------------------------------------------------------
-
-// adjust the positions of all motes
 - (void) advanceMotes
 {
     int i = 0;
@@ -565,7 +526,7 @@
                 float forceY = motes[attractor].position.y - motes[i].position.y;
                 float forceMag2 = forceX * forceX + forceY * forceY + 1.0f;
                 float forceMag = sqrt(forceMag2) + 2.0;
-                               
+				
                 // apply friction to existing velocity
                 float newX = motes[i].velocity.x * smoothness;
                 float newY = motes[i].velocity.y * smoothness;
@@ -603,7 +564,7 @@
             }
             break;
         }
-        
+			
         case MODE_LOGO:
         {
             // move all motes using an attraction towards their home
@@ -613,14 +574,14 @@
                 float forceY = motes[i].home.y - motes[i].position.y;
                 float forceMag2 = forceX * forceX + forceY * forceY + 1.0f;
                 float forceMag = sqrt(forceMag2) + 2.0;
-                               
+				
                 // apply friction to existing velocity
                 float newX = motes[i].velocity.x * smoothness * smoothness * smoothness;
                 float newY = motes[i].velocity.y * smoothness * smoothness * smoothness;
                 
                 forceX = SWARM_FORCE * (forceX / forceMag);
                 forceY = SWARM_FORCE * (forceY / forceMag);
-               
+				
                 // accelerate based on mass and force
                 newX += forceX / motes[i].mass;
                 newY += forceY / motes[i].mass;
@@ -636,7 +597,7 @@
             }
             break;
         }
-
+			
         case MODE_SCATTER:
         {
             // repel all motes from their home, with wrapping
@@ -670,7 +631,7 @@
             
             break;
         }
-        
+			
         case MODE_DRIFT:
             for ( ; i < numMotes; ++i )
             {
@@ -741,9 +702,6 @@
     }
 }
 
-//---------------------------------------------------------------------------------
-
-// adjust the field vectors
 - (void) advanceFields
 {
     // the fields are rotated by matrix multiplication
@@ -761,9 +719,6 @@
     }
 }
 
-//---------------------------------------------------------------------------------
-
-// draw all motes to the screen
 - (void) drawMotes
 {
     int i = 0;
@@ -795,12 +750,12 @@
             glLineWidth ( motes[i].mass / 10.0f );
             
             glColor3f ( (motes[i].colour.r + bg.r) / 2.0f,
-						(motes[i].colour.g + bg.g) / 2.0f,
-                        (motes[i].colour.b + bg.b) / 2.0f );
+					   (motes[i].colour.g + bg.g) / 2.0f,
+					   (motes[i].colour.b + bg.b) / 2.0f );
             glVertex2f ( motes[i].position.x,
-                         motes[i].position.y );
+						motes[i].position.y );
             glVertex2f ( motes[i].previous.x,
-                         motes[i].previous.y );
+						motes[i].previous.y );
             
         }
 		glEnd ();
@@ -822,8 +777,8 @@
 					float mvy = (motes[i].velocity.y * motes[i].mass) / (modv * moteSize);
 					
 					glColor3f ( motes[i].colour.r,
-								motes[i].colour.g,
-								motes[i].colour.b );
+							   motes[i].colour.g,
+							   motes[i].colour.b );
 					glVertex2f ( motes[i].position.x + mvx,  motes[i].position.y + mvy );
 					glVertex2f ( motes[i].position.x + mvy, motes[i].position.y - mvx );
 					glVertex2f ( motes[i].position.x - mvx,  motes[i].position.y - mvy );
@@ -840,8 +795,8 @@
 					float mvx = motes[i].mass * scale;
 					
 					glColor3f ( motes[i].colour.r,
-								motes[i].colour.g,
-								motes[i].colour.b );
+							   motes[i].colour.g,
+							   motes[i].colour.b );
 					glVertex2f ( motes[i].position.x + mvx,  motes[i].position.y + mvx );
 					glVertex2f ( motes[i].position.x - mvx, motes[i].position.y + mvx );
 					glVertex2f ( motes[i].position.x - mvx,  motes[i].position.y - mvx );
@@ -850,7 +805,7 @@
 			}
 			break;
 		}
-		
+			
 		case MOTE_DIAMOND:
 		{
 			if ( directional )
@@ -865,8 +820,8 @@
 					float mvy2 = mvy/1.5f;
 					
 					glColor3f ( motes[i].colour.r,
-								motes[i].colour.g,
-								motes[i].colour.b );
+							   motes[i].colour.g,
+							   motes[i].colour.b );
 					glVertex2f ( motes[i].position.x + mvx,  motes[i].position.y + mvy );
 					glVertex2f ( motes[i].position.x + mvy2, motes[i].position.y - mvx2 );
 					glVertex2f ( motes[i].position.x - mvx,  motes[i].position.y - mvy );
@@ -881,8 +836,8 @@
 					float mvy = mvx/1.5f;
 					
 					glColor3f ( motes[i].colour.r,
-								motes[i].colour.g,
-								motes[i].colour.b );
+							   motes[i].colour.g,
+							   motes[i].colour.b );
 					glVertex2f ( motes[i].position.x + mvx,  motes[i].position.y );
 					glVertex2f ( motes[i].position.x, motes[i].position.y + mvy );
 					glVertex2f ( motes[i].position.x - mvx,  motes[i].position.y );
@@ -891,7 +846,7 @@
 			}
 			break;
 		}
-		
+			
 		case MOTE_HEXAGON:
 		{
 			if ( directional )
@@ -908,8 +863,8 @@
 					float mvy2 = mvy * 0.866f;
 					
 					glColor3f ( motes[i].colour.r,
-								motes[i].colour.g,
-								motes[i].colour.b );
+							   motes[i].colour.g,
+							   motes[i].colour.b );
 					glVertex2f ( motes[i].position.x + mvx, motes[i].position.y + mvy );
 					glVertex2f ( motes[i].position.x + mvx1 - mvy2, motes[i].position.y + mvy1 + mvx2 );
 					glVertex2f ( motes[i].position.x - mvx1 - mvy2, motes[i].position.y - mvy1 + mvx2 );
@@ -935,19 +890,19 @@
 					float mvy = motes[i].mass * scaley;
 					
 					glColor3f ( motes[i].colour.r,
-								motes[i].colour.g,
-								motes[i].colour.b );
+							   motes[i].colour.g,
+							   motes[i].colour.b );
 					
 					glVertex2f ( motes[i].position.x,  motes[i].position.y + mv1 );
 					glVertex2f ( motes[i].position.x - mvx, motes[i].position.y + mvy );
 					glVertex2f ( motes[i].position.x - mvx, motes[i].position.y - mvy );
 					glVertex2f ( motes[i].position.x,  motes[i].position.y - mv1 );
-
+					
 					glVertex2f ( motes[i].position.x,  motes[i].position.y + mv1 );
 					glVertex2f ( motes[i].position.x,  motes[i].position.y - mv1 );
 					glVertex2f ( motes[i].position.x + mvx, motes[i].position.y - mvy );
 					glVertex2f ( motes[i].position.x + mvx, motes[i].position.y + mvy );
-			}		
+				}		
 			}
 			break;
 		}
@@ -958,47 +913,16 @@
     glFlush();
 }
 
-//---------------------------------------------------------------------------------
-//  cleaning up
-//---------------------------------------------------------------------------------
+#pragma mark Configuration
 
-// dispose of allocated resources
-- (void) dealloc
-{
-    // delete the particles array
-    free ( motes );
-    motes = 0;
-    
-    // delete the logo, if extant
-    free ( logo );
-    logo = 0;
-
-    if ( logoImageSrc != nil )
-    {
-        [logoImageSrc release];
-        logoImageSrc = nil;
-    }
-    
-    [_view removeFromSuperview];
-    [super dealloc];
-}
-
-//---------------------------------------------------------------------------------
-//  configuration
-//---------------------------------------------------------------------------------
-
-// is the saver configurable?
-- (BOOL) hasConfigureSheet
+- (BOOL)hasConfigureSheet
 {
     return YES;
 }
 
-//---------------------------------------------------------------------------------
-
-// get the configuration dialog
 - (NSWindow*) configureSheet
 {
-    [NSBundle loadNibNamed:@"dust.nib" owner:self];
+    [NSBundle loadNibNamed:@"Pollen.nib" owner:self];
     [motesSlider setIntValue: numMotes];
     [tailsBox setIntValue: (drawMode == DRAW_LINES)];
     [coloursBox setIntValue: useLogoColours];
@@ -1017,17 +941,12 @@
     return window;
 }
 
-//---------------------------------------------------------------------------------
-
-// close the configuration dialog
 - (IBAction)closeSheet:(id)sender
 {
     int newValue, i;
     
     // update prefs from window controls
     
-    // #### only reallocate the motes if there are more -- if less,
-    // #### we just use a smaller number of them
     newValue = [motesSlider intValue];
     
     if (newValue > numMotesAllocated)
@@ -1054,7 +973,7 @@
     {
         numMotes = newValue;
     }
-	    
+	
     newValue = ([coloursBox intValue] != 0);
     if ( newValue != useLogoColours )
     {
@@ -1072,7 +991,7 @@
     mainScreenOnly = ([screensBox intValue] != 0);
     
     drawMode = ( [tailsBox intValue] ? DRAW_LINES : DRAW_POINTS );
-
+	
 	newValue = [sizeSlider intValue];
 	
 	moteSize = newValue > 19 ? DEFAULT_MOTE_SIZE : (newValue < 1 ? DEFAULT_MOTE_SIZE : 20 - newValue );
@@ -1105,13 +1024,8 @@
         bg.r = bg.g = bg.b = 0.0;
 }
 
-//---------------------------------------------------------------------------------
-
-// select a picture file to use as the logo
 - (IBAction)chooseLogo:(id)sender
 {
-    // #### bring up a file open dialog and wait
-    // #### for a choice
     int result;
     NSArray* fileTypes = [NSImage imageFileTypes];
     NSOpenPanel* panel = [NSOpenPanel openPanel];
@@ -1121,7 +1035,7 @@
     if ( result == NSOKButton )
     {
         logoFile = [[panel filename] copyWithZone:nil];
-    
+		
         // set the resulting image file as the preferred logo
         [self loadLogo];
         
@@ -1145,9 +1059,6 @@
     }
 }
 
-//---------------------------------------------------------------------------------
-
-// use the default POLLEN logo
 - (IBAction)defaultLogo:(id)sender
 {
     if ( logoMode == LOGO_DEFAULT )
@@ -1157,16 +1068,13 @@
     else
     {
         logoMode = LOGO_DEFAULT;
-        logoFile = [[NSBundle bundleForClass: [Dust class]] pathForImageResource:DEFAULT_LOGO];
+        logoFile = [[NSBundle bundleForClass: [Pollen class]] pathForImageResource:DEFAULT_LOGO];
         [self loadLogo];
         [logoImage setImage:logoImageSrc];
         reinitMotes = YES;
     }
 }
 
-//---------------------------------------------------------------------------------
-
-// don't use any logo at all
 - (IBAction)noLogo:(id)sender
 {
     logoMode = LOGO_NONE;
@@ -1176,7 +1084,5 @@
     [logoImage setImage: nil];
     reinitMotes = YES;
 }
-
-//---------------------------------------------------------------------------------
 
 @end

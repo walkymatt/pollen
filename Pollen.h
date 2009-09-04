@@ -1,9 +1,17 @@
+//
+//  Pollen.h
+//  pollen
+//
+//  Created by Matthew Caldwell on 04/09/2009.
+//  Copyright (c) 2001-2009. All rights reserved.
+//
+
 #import <Cocoa/Cocoa.h>
 #import <ScreenSaver/ScreenSaver.h>
 #import <OpenGL/gl.h>
 #import <OpenGL/glu.h>
 
-#import "DustMote.h"
+#import "Mote.h"
 
 #define NUM_FIELDS	9
 #define FIELDS_ACROSS	3
@@ -47,114 +55,111 @@ enum
 	MOTE_HEXAGON	= 2
 };
 
-/*
-    Class implementing the Dust screensaver. Handles both the
-    configuration and the display.
-*/
-@interface Dust : ScreenSaverView
+
+@interface Pollen : ScreenSaverView
 {
-    // display environment
-    NSOpenGLView*	_view;
-    BOOL		_initedGL;
-    
-    // modes
-    int		modeFrameLimits[NUM_MODES];
-    int		mode;
-    
-    int		playList[MAX_PLAYLIST_SIZE];
-    int		playListSize;
-    int		playListIndex;
-    int		frameCount;
-    int		frameLimit;
-    
-    int		drawMode;
-    
-    // disable all drawing except on main screen?
-    BOOL	mainScreenOnly;
-    BOOL	drawingEnabled;
-    
-    // preferences
-    ScreenSaverDefaults*	prefs;
-    
-    // name of the logo image file
-    NSString*	logoFile;
-    int		logoMode;
-    NSImage*	logoImageSrc;
-    
-    // logo pixel data (if any)
-    Colour3f*	logo;
-    int		logoWidth;
-    int		logoHeight;
-    
-    // number of non-background pixels in the image
-    // this must reach some arbitrary limit (say 50)
-    // or else the image is rejected and the default
-    // used instead
-    int		numNonBGPixels;
-    
-    // use colours from the logo image?
-    BOOL	useLogoColours;
-    
-    // minimum contrast required for a pixel to be
-    // accepted as non-background
-    float	minimumContrast;
-    
-    // used and actual sizes of the motes array
-    int		numMotes;
-    int		numMotesAllocated;
-	
+	// display environment
+	NSOpenGLView*	_view;
+	BOOL		_initedGL;
+
+	// modes
+	int		modeFrameLimits[NUM_MODES];
+	int		mode;
+
+	int		playList[MAX_PLAYLIST_SIZE];
+	int		playListSize;
+	int		playListIndex;
+	int		frameCount;
+	int		frameLimit;
+
+	int		drawMode;
+
+	// disable all drawing except on main screen?
+	BOOL	mainScreenOnly;
+	BOOL	drawingEnabled;
+
+	// preferences
+	ScreenSaverDefaults*	prefs;
+
+	// name of the logo image file
+	NSString*	logoFile;
+	int		logoMode;
+	NSImage*	logoImageSrc;
+
+	// logo pixel data (if any)
+	Colour3f*	logo;
+	int		logoWidth;
+	int		logoHeight;
+
+	// number of non-background pixels in the image
+	// this must reach some arbitrary limit (say 50)
+	// or else the image is rejected and the default
+	// used instead
+	int		numNonBGPixels;
+
+	// use colours from the logo image?
+	BOOL	useLogoColours;
+
+	// minimum contrast required for a pixel to be
+	// accepted as non-background
+	float	minimumContrast;
+
+	// used and actual sizes of the motes array
+	int		numMotes;
+	int		numMotesAllocated;
+
 	// size of an individual mote
 	int		moteSize;
-	
+
 	// shape of an individual mote
 	int		moteShape;
-	
+
 	// are motes directional?
 	BOOL	directional;
-    
-    // the array of motes
-    DustMote*	motes;
-    
-    // does the motes array need reinitialization
-    BOOL	reinitMotes;
-    
-    // the array of force vectors
-    Vector2f 	fields[NUM_FIELDS];
-    
-    // fixed array of force vectors used in SWIRL mode
-    Vector2f	swirl[NUM_FIELDS];
-    
-    // rotations applied to the force vectors
-    Matrix2f	rotators[NUM_FIELDS];
-    
-    // pixel width of each field cell
-    int		fieldWidth;
-    
-    // pixel height of each field cell
-    int		fieldHeight;
-    
-    // pixel width of the display surface
-    int		displayWidth;
-    
-    // pixel height of the display surface
-    int		displayHeight;
-    
-    // colour to which the background is cleared
-    Color3f	bg;
-    
-    // the proportion of velocity retained from frame to frame
-    // (ie, 1 - coefficient of friction)
-    float	smoothness;
 
-    // controls in the configuration dialog
-    IBOutlet id coloursBox;
-    IBOutlet id contrastBox;
-    IBOutlet id logoImage;
-    IBOutlet id motesSlider;
-    IBOutlet id screensBox;
+	// the array of motes
+	Mote*	motes;
+
+	// does the motes array need reinitialization
+	BOOL	reinitMotes;
+
+	// the array of force vectors
+	Vector2f 	fields[NUM_FIELDS];
+
+	// fixed array of force vectors used in SWIRL mode
+	Vector2f	swirl[NUM_FIELDS];
+
+	// rotations applied to the force vectors
+	Matrix2f	rotators[NUM_FIELDS];
+
+	// pixel width of each field cell
+	int		fieldWidth;
+
+	// pixel height of each field cell
+	int		fieldHeight;
+
+	// pixel width of the display surface
+	int		displayWidth;
+
+	// pixel height of the display surface
+	int		displayHeight;
+
+	// colour to which the background is cleared
+	Color3f	bg;
+
+	// the proportion of velocity retained from frame to frame
+	// (ie, 1 - coefficient of friction)
+	float	smoothness;
+
+	// controls in the configuration dialog
+	IBOutlet id coloursBox;
+	IBOutlet id contrastBox;
+	IBOutlet id logoImage;
+	IBOutlet id motesSlider;
+	IBOutlet id screensBox;
 	IBOutlet id sizeSlider;
 	IBOutlet id tailsBox;
-    IBOutlet id window;
+	IBOutlet id window;
 	IBOutlet id squareButton;
 	IBOutlet id diamondButton;
 	IBOutlet id hexButton;
@@ -223,7 +228,7 @@ static __inline__ float wrapTo (float value, float max)
     return ( (value < 0) ? value + max : ( (value >= max) ? (value - max) : value ) );
 }
 
-static __inline__ void wrapMote ( DustMote* mote, float xMax, float yMax )
+static __inline__ void wrapMote ( Mote* mote, float xMax, float yMax )
 {
     float newX = wrapTo ( mote->position.x, xMax );
     float newY = wrapTo ( mote->position.y, yMax );
@@ -237,7 +242,7 @@ static __inline__ void wrapMote ( DustMote* mote, float xMax, float yMax )
 static __inline__ float clipAbsMin ( float value, float absMin )
 {
     return ( (value >= 0.0) && (value < absMin) ) ? absMin :
-                (( (value <= 0.0) && (value > -absMin) ) ? -absMin : value );
+	(( (value <= 0.0) && (value > -absMin) ) ? -absMin : value );
 }
 
 static __inline__ float clipAbsMax ( float value, float absMax )
