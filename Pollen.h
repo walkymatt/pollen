@@ -55,6 +55,13 @@ enum
 	MOTE_HEXAGON	= 2
 };
 
+/* Colour modes */
+enum
+{
+	COLOURS_DEFAULT	= 0,
+	COLOURS_CUSTOM	= 1,
+	COLOURS_IMAGE	= 2
+};
 
 @interface Pollen : ScreenSaverView
 {
@@ -98,7 +105,7 @@ enum
 	int		numNonBGPixels;
 
 	// use colours from the logo image?
-	BOOL	useLogoColours;
+	int		colourMode;
 
 	// minimum contrast required for a pixel to be
 	// accepted as non-background
@@ -146,13 +153,18 @@ enum
 
 	// colour to which the background is cleared
 	Color3f	bg;
+	
+	// colour of "heavy" motes
+	Color3f heavy;
+	
+	// colour of "light" motes
+	Color3f light;
 
 	// the proportion of velocity retained from frame to frame
 	// (ie, 1 - coefficient of friction)
 	float	smoothness;
 
 	// controls in the configuration dialog
-	IBOutlet id coloursBox;
 	IBOutlet id contrastBox;
 	IBOutlet id logoImage;
 	IBOutlet id motesSlider;
@@ -164,6 +176,14 @@ enum
 	IBOutlet id diamondButton;
 	IBOutlet id hexButton;
 	IBOutlet id directionalButton;
+	IBOutlet NSColorWell* heavyWell;
+	IBOutlet NSColorWell* lightWell;
+	IBOutlet NSColorWell* bgWell;
+	IBOutlet id defaultColours;
+	IBOutlet id customColours;
+	IBOutlet id imageColours;
+	IBOutlet id bgLabel;
+	IBOutlet id motesLabel;
 }
 
 // methods used to load and run screen saver
@@ -220,6 +240,12 @@ enum
 
 // don't use any logo at all
 - (IBAction)noLogo:(id)sender;
+
+// set colours
+- (IBAction)setColourMode:(id)sender;
+- (IBAction)setHeavy:(id)sender;
+- (IBAction)setLight:(id)sender;
+- (IBAction)setBg:(id)sender;
 
 @end
 

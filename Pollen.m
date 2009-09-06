@@ -11,8 +11,8 @@
 
 #define SMOOTHNESS 0.99f
 #define NUM_MOTES 1500
-#define SWARM_FORCE 12.0
-#define FORCE_MAX 50.0
+#define SWARM_FORCE 9.0
+#define FORCE_MAX 33.0
 #define MIN_NON_BG_PIXELS 50
 #define DEFAULT_MOTE_SIZE 10
 
@@ -21,9 +21,16 @@
 
 #define radify(x) (x)*M_PI/180.0
 
+#define FPS 60
+
 #define DEFAULT_LOGO @"pollen.pict"
 
+const Color3f LIGHT = {1.0, 0.2, 0.69};
+const Color3f HEAVY = {1.0, 0.8, 0.5};
 
+const float MIN_WEIGHT = 25.0f;
+const float MAX_WEIGHT = 40.0f;
+const float WEIGHT_RANGE = 15.0f;
 
 @implementation Pollen
 
@@ -45,7 +52,7 @@
 		[self loadPrefs];
 		
         // only draw in preview mode or when we are on the main screen
-        if ( preview || !mainScreenOnly || ( frame.origin.x == 0 && frame.origin.y == 0 ) )
+        if ( preview || !mainScreenOnly || (frame.origin.x == 0 && frame.origin.y == 0) )
         {
             NSOpenGLPixelFormatAttribute attribs[] =
             {
@@ -60,23 +67,40 @@
 				= [[[NSOpenGLPixelFormat alloc] initWithAttributes:attribs] autorelease];
             
             drawingEnabled = YES;
-            
-            _view = [[[NSOpenGLView alloc] initWithFrame:NSZeroRect pixelFormat:format] autorelease];
-			NSOpenGLContext *ctx = [_view openGLContext];
-			[ctx makeCurrentContext];
-			GLint VBL = 1;
-			[ctx setValues:&VBL forParameter:NSOpenGLCPSwapInterval];
 			
-            [self addSubview:_view];
+			NSRect glFrame = frame;
+			glFrame.origin.x = glFrame.origin.y = 0;
+            
+            _view = [[[NSOpenGLView alloc] initWithFrame:glFrame pixelFormat:format] autorelease];
 			
-            if ( logoFile != nil )
-                [self loadLogo];
-            
-            // initialize the vector field
-            [self initVectorField];
-            
-            // allocate all motes
-            [self allocateMotes];
+			if ( _view )
+			{
+				NSOpenGLContext *ctx = [_view openGLContext];
+				[ctx makeCurrentContext];
+				GLint VBL = 1;
+				[ctx setValues:&VBL forParameter:NSOpenGLCPSwapInterval];
+				
+				[self setAutoresizesSubviews:YES];
+				
+				[self addSubview:_view];
+				[self setAnimationTimeInterval:1.0/FPS];
+
+				glClearColor(0.0, 0.0, 0.0, 1.0);
+				glClear(GL_COLOR_BUFFER_BIT);
+				glFlush();
+				
+				[ctx flushBuffer];
+				
+				if ( logoFile != nil )
+					[self loadLogo];
+				
+				// initialize the vector field
+				[self initVectorField];
+				
+				// allocate all motes
+				[self allocateMotes];
+			}
+			
         }
         else
         {
@@ -142,7 +166,7 @@
     motes[index].position.x = SSRandomFloatBetween ( 0, displayWidth );
     motes[index].position.y = SSRandomFloatBetween ( 0, displayHeight );
     motes[index].previous = motes[index].position;
-    motes[index].mass = SSRandomFloatBetween ( 25.0, 40.0 );
+    motes[index].mass = SSRandomFloatBetween ( MIN_WEIGHT, MAX_WEIGHT );
     
     if ( logo == nil )
     {
@@ -173,18 +197,20 @@
         }
     }
     
-    if ( logo == nil || useLogoColours == 0 )
+    if ( logo == nil || colourMode != COLOURS_IMAGE )
     {
-        motes[index].colour.r = 1.0;
-        motes[index].colour.g = (motes[index].mass - 20.0) / 25.0;
-        motes[index].colour.b = 1.0 - motes[index].mass / 80.0;
+		float massScale = (motes[index].mass - MIN_WEIGHT) / WEIGHT_RANGE;
+        motes[index].colour.r = light.r + (heavy.r - light.r) * massScale;
+        motes[index].colour.g = light.g + (heavy.g - light.g) * massScale;
+        motes[index].colour.b = light.b + (heavy.b - light.b) * massScale;
     }
     else
     {
         motes[index].colour = logo[logoIndex];
     }
     
-    motes[index].velocity.x = motes[index].velocity.y = 0.0f;
+    motes[index].velocity.x = SSRandomFloatBetween(-5.0f, 5.0f);
+	motes[index].velocity.y = SSRandomFloatBetween(-5.0f, 5.0f);
 }
 
 - (void) setFrameSize:(NSSize)newSize
@@ -207,7 +233,7 @@
 			[self initMote:i];  
 		
 		// set the background colour if necessary
-		if ( logo != nil && useLogoColours )
+		if ( logo != nil && colourMode == COLOURS_IMAGE )
 			bg = *logo;
 	}
 }
@@ -271,15 +297,39 @@
     // get the image data in TIFF form
     tiffData = [logoImageSrc TIFFRepresentation];
     
-    logoBits = [[NSBitmapImageRep alloc] initWithData:tiffData];
+    logoBits = [[[NSBitmapImageRep alloc] initWithData:tiffData] autorelease];
     logoWidth = [logoBits pixelsWide];
     logoHeight = [logoBits pixelsHigh];
+	
+	if ( [logoBits bitsPerSample] != 8
+		|| [logoBits isPlanar]
+		|| ([logoBits bitsPerPixel] != 24 && [logoBits bitsPerPixel] != 32)
+		|| ([logoBits samplesPerPixel] != 3 && [logoBits samplesPerPixel] != 4) )
+	{
+		NSBitmapImageRep* newRep =
+		[[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+												pixelsWide:logoWidth
+												pixelsHigh:logoHeight
+											 bitsPerSample:8
+										   samplesPerPixel:4
+												  hasAlpha:YES
+												  isPlanar:NO
+											colorSpaceName:NSCalibratedRGBColorSpace
+											   bytesPerRow:0
+											  bitsPerPixel:0] autorelease];
+		[NSGraphicsContext saveGraphicsState];
+		
+		NSGraphicsContext* context = [NSGraphicsContext graphicsContextWithBitmapImageRep:newRep];
+		[NSGraphicsContext setCurrentContext:context];
+		[logoBits drawInRect:NSMakeRect( 0, 0, [newRep pixelsWide], [newRep pixelsHigh] )];
+		[NSGraphicsContext restoreGraphicsState];
+		[newRep setSize:[logoImageSrc size]];
+		logoBits = newRep;
+	}
     
     // get pixel colour details from the bitmap data
     free ( logo );
     logo = [self getPixelColoursFromBitmapRep: logoBits];
-    
-    [logoBits release];
 }
 
 - (Colour3f*) getPixelColoursFromBitmapRep:(NSBitmapImageRep*)bitmap
@@ -378,8 +428,30 @@
 
 - (void) loadPrefs
 {
+	// set up the default defaults
+	NSMutableDictionary* defs = [[[NSMutableDictionary alloc] init] autorelease];
+	[defs setObject:[NSNumber numberWithInt:NUM_MOTES] forKey:@"numMotes"];
+	[defs setObject:[NSNumber numberWithInt:DEFAULT_MOTE_SIZE] forKey:@"moteSize"];
+	[defs setObject:[NSNumber numberWithBool:NO] forKey:@"mainScreenOnly"];
+	[defs setObject:[NSNumber numberWithInt:LOGO_DEFAULT] forKey:@"logoMode"];
+	[defs setObject:[NSNumber numberWithInt:DRAW_POINTS] forKey:@"drawMode"];
+	[defs setObject:[NSNumber numberWithInt:COLOURS_DEFAULT] forKey:@"colourMode"];
+	[defs setObject:[NSNumber numberWithBool:NO] forKey:@"contrastCheck"];
+	[defs setObject:[NSNumber numberWithInt:MOTE_DIAMOND] forKey:@"moteShape"];
+	[defs setObject:[NSNumber numberWithBool:YES] forKey:@"directional"];
+	[defs setObject:[NSNumber numberWithFloat:0] forKey:@"bgR"];
+	[defs setObject:[NSNumber numberWithFloat:0] forKey:@"bgG"];
+	[defs setObject:[NSNumber numberWithFloat:0] forKey:@"bgB"];
+	[defs setObject:[NSNumber numberWithFloat:LIGHT.r] forKey:@"lightR"];
+	[defs setObject:[NSNumber numberWithFloat:LIGHT.g] forKey:@"lightG"];
+	[defs setObject:[NSNumber numberWithFloat:LIGHT.b] forKey:@"lightB"];
+	[defs setObject:[NSNumber numberWithFloat:HEAVY.r] forKey:@"heavyR"];
+	[defs setObject:[NSNumber numberWithFloat:HEAVY.g] forKey:@"heavyG"];
+	[defs setObject:[NSNumber numberWithFloat:HEAVY.b] forKey:@"heavyB"];
+	
     // load preferences object
     prefs = [ScreenSaverDefaults defaultsForModuleWithName:@"Pollen"];
+	[prefs registerDefaults:defs];
     
     // load individual preferences
     numMotes = [prefs integerForKey:@"numMotes"];
@@ -401,7 +473,7 @@
         logoFile = nil;
     
     drawMode = [prefs integerForKey:@"drawMode"];
-    useLogoColours = [prefs boolForKey:@"useLogoColours"];
+    colourMode = [prefs integerForKey:@"colourMode"];
     
     minimumContrast = [prefs boolForKey:@"contrastCheck"] ? CONTRAST_ON : CONTRAST_OFF;
 	
@@ -412,10 +484,19 @@
 	}
 	
 	directional = [prefs boolForKey:@"directional"];
-    
+	
+    bg.r = [prefs floatForKey:@"bgR"];
+	bg.g = [prefs floatForKey:@"bgG"];
+	bg.b = [prefs floatForKey:@"bgB"];
+	light.r = [prefs floatForKey:@"lightR"];
+	light.g = [prefs floatForKey:@"lightG"];
+	light.b = [prefs floatForKey:@"lightB"];
+	heavy.r = [prefs floatForKey:@"heavyR"];
+	heavy.g = [prefs floatForKey:@"heavyG"];
+	heavy.b = [prefs floatForKey:@"heavyB"];
+	
     // remaining details are, after some consideration, not configurable
     smoothness = SMOOTHNESS;    
-    bg.r = bg.g = bg.b = 0.0f;
     [self initPlayList];
 }
 
@@ -425,15 +506,24 @@
         return;
     
     [prefs setInteger:numMotes forKey:@"numMotes"];
-    [prefs setInteger:drawMode forKey:@"drawMode"];
-    [prefs setInteger:logoMode forKey:@"logoMode"];
 	[prefs setInteger:moteSize forKey:@"moteSize"];
+    [prefs setBool:mainScreenOnly forKey:@"mainScreenOnly"];
+    [prefs setInteger:logoMode forKey:@"logoMode"];
+    [prefs setInteger:drawMode forKey:@"drawMode"];
+    [prefs setInteger:colourMode forKey:@"colourMode"];
+    [prefs setBool:(minimumContrast > CONTRAST_OFF) forKey:@"contrastCheck"];
 	[prefs setInteger:moteShape forKey:@"moteShape"];
 	[prefs setBool:directional forKey:@"directional"];
-    [prefs setBool:useLogoColours forKey:@"useLogoColours"];
-    [prefs setBool:mainScreenOnly forKey:@"mainScreenOnly"];
-    [prefs setBool:(minimumContrast > CONTRAST_OFF) forKey:@"contrastCheck"];
-    
+	[prefs setFloat:bg.r forKey:@"bgR"];
+	[prefs setFloat:bg.g forKey:@"bgG"];
+	[prefs setFloat:bg.b forKey:@"bgB"];
+	[prefs setFloat:light.r forKey:@"lightR"];
+	[prefs setFloat:light.g forKey:@"lightG"];
+	[prefs setFloat:light.b forKey:@"lightB"];
+	[prefs setFloat:heavy.r forKey:@"heavyR"];
+	[prefs setFloat:heavy.g forKey:@"heavyG"];
+	[prefs setFloat:heavy.b forKey:@"heavyB"];
+
     if ( logoMode == LOGO_CUSTOM && logoFile != nil )
         [prefs setObject:logoFile forKey:@"logoFile"];
     else
@@ -455,6 +545,11 @@
             [self initGL:(int)[self frame].size.width :(int)[self frame].size.height];
             _initedGL = YES;
         }
+		
+		glClearColor ( bg.r, bg.g, bg.b, 1.0 );
+		glClear ( GL_COLOR_BUFFER_BIT );
+		glFlush ();
+		[[_view openGLContext] flushBuffer];
         
         [_view unlockFocus];
     }
@@ -925,7 +1020,9 @@
     [NSBundle loadNibNamed:@"Pollen.nib" owner:self];
     [motesSlider setIntValue: numMotes];
     [tailsBox setIntValue: (drawMode == DRAW_LINES)];
-    [coloursBox setIntValue: useLogoColours];
+	[defaultColours setState: (colourMode == COLOURS_DEFAULT) ? NSOnState : NSOffState];
+	[customColours setState: (colourMode == COLOURS_CUSTOM) ? NSOnState : NSOffState];
+	[imageColours setState: (colourMode == COLOURS_IMAGE) ? NSOnState : NSOffState];
     [contrastBox setIntValue: (minimumContrast > CONTRAST_OFF)];
     [screensBox setIntValue: mainScreenOnly];
     [logoImage setImage:logoImageSrc];
@@ -935,9 +1032,18 @@
 	[squareButton setIntValue: (moteShape == MOTE_SQUARE)];
 	[diamondButton setIntValue: (moteShape == MOTE_DIAMOND)];
 	[hexButton setIntValue: (moteShape == MOTE_HEXAGON)];
+	
+	[bgWell setColor:[NSColor colorWithDeviceRed:bg.r green:bg.g blue:bg.b alpha:1.0]];
+	[lightWell setColor:[NSColor colorWithDeviceRed:light.r green:light.g blue:light.b alpha:1.0]];
+	[heavyWell setColor:[NSColor colorWithDeviceRed:heavy.r green:heavy.g blue:heavy.b alpha:1.0]];
     
+	[bgWell setEnabled:(colourMode == COLOURS_CUSTOM)];
+	[lightWell setEnabled:(colourMode == COLOURS_CUSTOM)];
+	[heavyWell setEnabled:(colourMode == COLOURS_CUSTOM)];
+	[bgLabel setTextColor:(colourMode == COLOURS_CUSTOM) ? [NSColor controlTextColor] : [NSColor disabledControlTextColor]];
+	[motesLabel setTextColor:(colourMode == COLOURS_CUSTOM) ? [NSColor controlTextColor] : [NSColor disabledControlTextColor]];
+
     reinitMotes = NO;
-    
     return window;
 }
 
@@ -972,13 +1078,6 @@
     else
     {
         numMotes = newValue;
-    }
-	
-    newValue = ([coloursBox intValue] != 0);
-    if ( newValue != useLogoColours )
-    {
-        useLogoColours = newValue;
-        reinitMotes = YES;
     }
     
     newValue = ([contrastBox intValue] != 0);
@@ -1018,10 +1117,8 @@
     }
     
     // set the background colour if necessary
-    if ( logo != nil && useLogoColours )
+    if ( logo != nil && colourMode == COLOURS_IMAGE )
         bg = *logo;
-    else
-        bg.r = bg.g = bg.b = 0.0;
 }
 
 - (IBAction)chooseLogo:(id)sender
@@ -1083,6 +1180,104 @@
     logoImageSrc = nil;
     [logoImage setImage: nil];
     reinitMotes = YES;
+}
+
+// set colours
+- (IBAction)setColourMode:(id)sender
+{
+	if ( sender == defaultColours )
+	{
+		colourMode = COLOURS_DEFAULT;
+		bg.r = bg.g = bg.b = 0.0f;
+		light = LIGHT;
+		heavy = HEAVY;
+		
+		[defaultColours setState:NSOnState];
+		[customColours setState:NSOffState];
+		[imageColours setState:NSOffState];
+
+		[heavyWell setEnabled:NO];
+		[lightWell setEnabled:NO];
+		[bgWell setEnabled:NO];
+		[bgLabel setTextColor:[NSColor disabledControlTextColor]];
+		[motesLabel setTextColor:[NSColor disabledControlTextColor]];
+		
+		reinitMotes = YES;
+	}
+	else if ( sender == customColours )
+	{
+		colourMode = COLOURS_CUSTOM;
+		[self setBg:nil];
+		[self setHeavy:nil];
+		[self setLight:nil];
+		
+		[defaultColours setState:NSOffState];
+		[customColours setState:NSOnState];
+		[imageColours setState:NSOffState];
+		
+		[heavyWell setEnabled:YES];
+		[lightWell setEnabled:YES];
+		[bgWell setEnabled:YES];
+		[bgLabel setTextColor:[NSColor controlTextColor]];
+		[motesLabel setTextColor:[NSColor controlTextColor]];
+		
+		reinitMotes = YES;
+	}
+	else if ( sender == imageColours )
+	{
+		colourMode = COLOURS_IMAGE;
+		
+		[defaultColours setState:NSOffState];
+		[customColours setState:NSOffState];
+		[imageColours setState:NSOnState];
+
+		[heavyWell setEnabled:NO];
+		[lightWell setEnabled:NO];
+		[bgWell setEnabled:NO];
+		[bgLabel setTextColor:[NSColor disabledControlTextColor]];
+		[motesLabel setTextColor:[NSColor disabledControlTextColor]];
+				
+		reinitMotes = YES;
+	}
+}
+
+- (IBAction)setHeavy:(id)sender
+{
+	NSColor* col = [[heavyWell color] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+	if ( col )
+	{
+		heavy.r = [col redComponent];
+		heavy.g = [col greenComponent];
+		heavy.b = [col blueComponent];
+		
+		reinitMotes = YES;
+	}
+}
+
+- (IBAction)setLight:(id)sender
+{
+	NSColor* col = [[lightWell color] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+	if ( col )
+	{
+		light.r = [col redComponent];
+		light.g = [col greenComponent];
+		light.b = [col blueComponent];
+		
+		reinitMotes = YES;
+	}
+}
+
+- (IBAction)setBg:(id)sender
+{
+	NSColor* col = [[bgWell color] colorUsingColorSpaceName:NSDeviceRGBColorSpace];
+	if ( col )
+	{
+		bg.r = [col redComponent];
+		bg.g = [col greenComponent];
+		bg.b = [col blueComponent];
+		
+		reinitMotes = YES;
+	}
 }
 
 @end

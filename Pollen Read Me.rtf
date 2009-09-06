@@ -1,66 +1,75 @@
-{\rtf1\mac\ansicpg10000\cocoartf824\cocoasubrtf410
-{\fonttbl\f0\fswiss\fcharset77 Helvetica-Bold;\f1\fswiss\fcharset77 Helvetica;\f2\fswiss\fcharset77 Helvetica-Oblique;
-\f3\fswiss\fcharset77 Helvetica-BoldOblique;}
+{\rtf1\ansi\ansicpg1252\cocoartf1038
+{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
 {\colortbl;\red255\green255\blue255;}
-\paperw11905\paperh16837\margl1440\margr1440\vieww13000\viewh10360\viewkind0
+{\*\listtable{\list\listtemplateid1\listhybrid{\listlevel\levelnfc23\levelnfcn23\leveljc0\leveljcn0\levelfollow0\levelstartat1\levelspace360\levelindent0{\*\levelmarker \{disc\}}{\leveltext\leveltemplateid1\'01\uc0\u8226 ;}{\levelnumbers;}\fi-360\li720\lin720 }{\listname ;}\listid1}}
+{\*\listoverridetable{\listoverride\listid1\listoverridecount0\ls1}}
+\paperw11900\paperh16840\margl1440\margr1440\vieww16180\viewh15520\viewkind0
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f0\b\fs28 \cf0 Pollen Screensaver 0.96b
-\f1\b0\fs24 \
+\f0\b\fs28 \cf0 Pollen Screensaver 1.0b
+\b0\fs24 \
 \
 
-\f0\b What Is It?
-\f1\b0 \
+\b What Is It?
+\b0 \
 Pollen is a simple particle-system screensaver for Mac OS X. A bunch of "pollen" particles are moved around by various forces, producing a variety of drifting and swarming motions. The particles can also optionally gather to form a logo or image.\
 \
 If you like this sort of thing (obviously I do) it can be completely mesmerising; if not, there are plenty of other screensavers out there.\
 \
-There may be a Windows version eventually, because several of my friends have asked for one. If you'd like to see such a thing, drop me a line. No idea when I'll get around to it, though -- I've managed to avoid thinking about it for quite a while already.\
+
+\b What's new?
+\b0 \
+\pard\tx220\tx720\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\li720\fi-720\ql\qnatural
+\ls1\ilvl0\cf0 {\listtext	\'95	}Pollen now works under Snow Leopard.\
+{\listtext	\'95	}You can choose your own colour scheme, using the same colour-mass relationship used in the default scheme.\
+{\listtext	\'95	}Non-RGB logo images are supported.\
+{\listtext	\'95	}There is no longer a white flash on start-up.\
+{\listtext	\'95	}Now runs at up to 60 fps.\
+{\listtext	\'95	}Various internal cleanups and improvements.\
+\pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
+\cf0 \
+
+\b System Requirements
+\b0 \
+Pollen requires Mac OS X on a Macintosh computer with hardware-accelerated OpenGL. The current version was built and tested on OS X 10.6 (Snow Leopard). It is a Universal Binary and should run on both Intel and PowerPC Macs, and on versions of the system back to 10.4 (Tiger), although this has not been tested. (If you try it on an old system, please let me know whether it works!)\
 \
 
-\f0\b System Requirements
-\f1\b0 \
-Pollen requires Mac OS X on a reasonably fast Macintosh computer with hardware-accelerated OpenGL. As of version 0.96b, Pollen is a Universal Binary and as such should run on both PowerPC and Intel-based Macs.\
-\
-The current version was built and tested on OS X 10.4 (Tiger). There is no good reason it shouldn't run with earlier versions (at least as far back as 10.1), but it hasn't been explicitly tested on them. If you encounter problems please let me know.\
-\
-
-\f0\b Installation
-\f1\b0 \
+\b Installation
+\b0 \
 Place the Pollen.saver file into your Library/Screen Savers folder. You should then be able to select Pollen from the list of savers in your System Preferences panel.\
 \
 
-\f0\b Logo
-\f1\b0 \
-Pollen is set to display its own logo by default, but you can configure it to use any other suitable image through the preferences panel. It should be able to handle most common image file types including PICT, TIFF, BMP, JPEG and PDF. The image is used at its natural size, not scaled to the screen, so be sure to pick an image that fits nicely onscreen with some space around it.\
+\b Logo
+\b0 \
+Pollen is set to display its own logo by default, but you can configure it to use any other suitable image through the preferences panel. It should be able to handle most image types readable by OS X. The image is used at its natural size, not scaled to the screen, so be sure to pick an image that fits nicely onscreen with some space around it.\
 \
-The colour in the top-left pixel of the image is used as the background colour. By default, Pollen considers all pixels that are not this exact colour to be part of the logo. If you want it to treat a wider range of colours as background, select the "Skip Colours Near BG" checkbox; this will often look better, especially if you are using the image colours rather than the default colour scheme (thanks to Monroe Williams for this suggestion). There must be a reasonable number of non-background pixels in the image or the logo will not be displayed.\
+The colour in the top-left pixel of the image is used as the background colour. By default, Pollen considers all pixels that are not this exact colour to be part of the logo. If you want it to treat a wider range of colours as background, select the "Skip pixels near background" checkbox; this will often look better, especially if you are using the image colours rather than the default colour scheme (thanks to Monroe Williams for this suggestion). There must be a reasonable number of non-background pixels in the image or the logo will not be displayed.\
 \
 A logo will usually look better when represented by a larger number of motes, but that may affect performance; and it will lose definition with larger sized motes: play with these settings until you are happy, or give up and throw the thing away.\
 \
 
-\f0\b Multiple Screens
-\f1\b0 \
+\b Multiple Screens
+\b0 \
 Pollen may have problems with some multiple screen setups, and performance is likely to be poor since a separate copy is run for each screen. You may prefer to have Pollen render only to your main screen, leaving all other screens blank; hence the checkbox in the configuration dialog. If you continue to have multiple screen problems even with this preference checked, please send in a bug report.\
 \
 \pard\tx1440\tx2880\tx4320\tx5760\tx7200\ql\qnatural
 
-\f0\b \cf0 Credits
-\f1\b0 \
+\b \cf0 Credits
+\b0 \
 As mentioned above, 
-\f0\b Monroe Williams
-\f1\b0  suggested the 
-\f2\i Skip Colours Near BG
-\f1\i0  behaviour. 
-\f0\b Brian Ramagli
-\f1\b0  (aka Sky Hawk) at 
-\f0\b HKA Software
-\f1\b0  (http://www.hkasoftware.com) improved the drawing code and inspired the new settings for mote shape and size.\
+\b Monroe Williams
+\b0  suggested the 
+\i Skip Colours Near BG
+\i0  behaviour. 
+\b Brian Ramagli
+\b0  (aka Sky Hawk) at 
+\b HKA Software
+\b0  (http://www.hkasoftware.com) helped improve the drawing code.\
 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
-\f0\b \cf0 Issues
-\f1\b0 \
+\b \cf0 Issues
+\b0 \
 This is beta-quality software and may exhibit unforeseen problems. In particular, the handling of logo images is not very sophisticated and may fail or produce unattractive results in some cases.\
 \
 If you discover any bugs, please report them, including as much detail about the symptoms and your system as you can muster. I don't promise to do anything about them, but it's a dead cert I won't if I don't know about them.\
@@ -68,21 +77,21 @@ If you discover any bugs, please report them, including as much detail about the
 Feel free to suggest improvements or features you'd like added also.\
 \
 
-\f0\b Contact
-\f1\b0 \
+\b Contact
+\b0 \
 Submit bug reports and feature requests to 
-\f3\i\b matt@walkytalky.net
-\f2\b0 .
-\f1\i0  The latest version of Pollen and up to date information about it can be found at the Pollen homepage: 
-\f3\i\b http://walkytalky.net/pollen/
-\f1\i0\b0 \
+\i\b matt@walkytalky.net
+\b0 .
+\i0  The latest version of Pollen and up to date information about it can be found at the Pollen homepage: 
+\i\b http://walkytalky.net/pollen/
+\i0\b0 \
 \
 
-\f0\b Small Print
-\f1\b0 \
+\b Small Print
+\b0 \
 \pard\tx560\tx1120\tx1680\tx2240\tx2800\tx3360\tx3920\tx4480\tx5040\tx5600\tx6160\tx6720\ql\qnatural
 
 \fs22 \cf0 Pollen is 
-\f2\i freeware
-\f1\i0 : it may be copied and distributed freely, but not sold. It remains copyright \'a9 2001-2006 by Matthew Caldwell. It is supplied as-is with no warranty or guarantee of any kind, and no responsibility will be accepted by the author for any damage or problems caused directly or indirectly by its use. Handle with care.\
+\i freeware
+\i0 : it may be copied and distributed freely, but not sold. It remains copyright \'a9 2001-2009 by Matthew Caldwell. It is supplied as-is with no warranty or guarantee of any kind, and no responsibility will be accepted by the author for any damage or problems caused directly or indirectly by its use. Handle with care.\
 }
