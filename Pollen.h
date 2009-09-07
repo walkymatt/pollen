@@ -163,6 +163,9 @@ enum
 	// the proportion of velocity retained from frame to frame
 	// (ie, 1 - coefficient of friction)
 	float	smoothness;
+	
+	// amount by which acceleration is scaled
+	float	speed;
 
 	// controls in the configuration dialog
 	IBOutlet id contrastBox;
@@ -184,6 +187,7 @@ enum
 	IBOutlet id imageColours;
 	IBOutlet id bgLabel;
 	IBOutlet id motesLabel;
+	IBOutlet id speedSlider;
 }
 
 // methods used to load and run screen saver

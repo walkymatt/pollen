@@ -11,8 +11,7 @@
 
 #define SMOOTHNESS 0.99f
 #define NUM_MOTES 1500
-#define SWARM_FORCE 9.0
-#define FORCE_MAX 33.0
+#define SWARM_FORCE 12.0
 #define MIN_NON_BG_PIXELS 50
 #define DEFAULT_MOTE_SIZE 10
 
@@ -31,6 +30,7 @@ const Color3f HEAVY = {1.0, 0.8, 0.5};
 const float MIN_WEIGHT = 25.0f;
 const float MAX_WEIGHT = 40.0f;
 const float WEIGHT_RANGE = 15.0f;
+
 
 @implementation Pollen
 
@@ -448,6 +448,7 @@ const float WEIGHT_RANGE = 15.0f;
 	[defs setObject:[NSNumber numberWithFloat:HEAVY.r] forKey:@"heavyR"];
 	[defs setObject:[NSNumber numberWithFloat:HEAVY.g] forKey:@"heavyG"];
 	[defs setObject:[NSNumber numberWithFloat:HEAVY.b] forKey:@"heavyB"];
+	[defs setObject:[NSNumber numberWithFloat:0.8] forKey:@"speed"];
 	
     // load preferences object
     prefs = [ScreenSaverDefaults defaultsForModuleWithName:@"Pollen"];
@@ -495,6 +496,8 @@ const float WEIGHT_RANGE = 15.0f;
 	heavy.g = [prefs floatForKey:@"heavyG"];
 	heavy.b = [prefs floatForKey:@"heavyB"];
 	
+	speed = [prefs floatForKey:@"speed"];
+	
     // remaining details are, after some consideration, not configurable
     smoothness = SMOOTHNESS;    
     [self initPlayList];
@@ -523,6 +526,7 @@ const float WEIGHT_RANGE = 15.0f;
 	[prefs setFloat:heavy.r forKey:@"heavyR"];
 	[prefs setFloat:heavy.g forKey:@"heavyG"];
 	[prefs setFloat:heavy.b forKey:@"heavyB"];
+	[prefs setFloat:speed forKey:@"speed"];
 
     if ( logoMode == LOGO_CUSTOM && logoFile != nil )
         [prefs setObject:logoFile forKey:@"logoFile"];
@@ -644,8 +648,8 @@ const float WEIGHT_RANGE = 15.0f;
                 }
                 
                 // accelerate based on mass and force
-                newX += forceX / motes[i].mass;
-                newY += forceY / motes[i].mass;
+                newX += speed * forceX / motes[i].mass;
+                newY += speed * forceY / motes[i].mass;
                 
                 // adjust position
                 motes[i].previous = motes[i].position;
@@ -678,9 +682,10 @@ const float WEIGHT_RANGE = 15.0f;
                 forceY = SWARM_FORCE * (forceY / forceMag);
 				
                 // accelerate based on mass and force
-                newX += forceX / motes[i].mass;
-                newY += forceY / motes[i].mass;
+                newX += speed * forceX / motes[i].mass;
+                newY += speed * forceY / motes[i].mass;
                 
+
                 // adjust position
                 motes[i].previous = motes[i].position;
                 motes[i].position.x += newX;
@@ -711,9 +716,9 @@ const float WEIGHT_RANGE = 15.0f;
                 forceY = SWARM_FORCE * (forceY / forceMag);
                 
                 // accelerate based on mass and force
-                newX += forceX / motes[i].mass;
-                newY += forceY / motes[i].mass;
-                
+                newX += speed * forceX / motes[i].mass;
+                newY += speed * forceY / motes[i].mass;
+
                 // adjust position
                 motes[i].previous = motes[i].position;
                 motes[i].position.x += newX;
@@ -755,9 +760,9 @@ const float WEIGHT_RANGE = 15.0f;
                 float newY = motes[i].velocity.y * smoothness;
                 
                 // accelerate based on mass and force
-                newX += swirl[fieldIndex].x / motes[i].mass;
-                newY += swirl[fieldIndex].y / motes[i].mass;
-                
+                newX += speed * swirl[fieldIndex].x / motes[i].mass;
+                newY += speed * swirl[fieldIndex].y / motes[i].mass;
+
                 // adjust position accordingly, wrapping around as necessary
                 motes[i].previous = motes[i].position;
                 motes[i].position.x += newX;
@@ -782,9 +787,9 @@ const float WEIGHT_RANGE = 15.0f;
                 float newY = motes[i].velocity.y * smoothness;
                 
                 // accelerate based on mass and force
-                newX += fields[fieldIndex].x / motes[i].mass;
-                newY += fields[fieldIndex].y / motes[i].mass;
-                
+                newX += speed * fields[fieldIndex].x / motes[i].mass;
+                newY += speed * fields[fieldIndex].y / motes[i].mass;
+				
                 // adjust position accordingly, wrapping around as necessary
                 motes[i].previous = motes[i].position;
                 motes[i].position.x += newX;
@@ -1042,6 +1047,8 @@ const float WEIGHT_RANGE = 15.0f;
 	[heavyWell setEnabled:(colourMode == COLOURS_CUSTOM)];
 	[bgLabel setTextColor:(colourMode == COLOURS_CUSTOM) ? [NSColor controlTextColor] : [NSColor disabledControlTextColor]];
 	[motesLabel setTextColor:(colourMode == COLOURS_CUSTOM) ? [NSColor controlTextColor] : [NSColor disabledControlTextColor]];
+	
+	[speedSlider setFloatValue:speed];
 
     reinitMotes = NO;
     return window;
@@ -1103,6 +1110,8 @@ const float WEIGHT_RANGE = 15.0f;
 		moteShape = MOTE_DIAMOND;
 	else
 		moteShape = MOTE_HEXAGON;
+	
+	speed = [speedSlider floatValue];
     
     // close the window
     [NSApp endSheet:window];
