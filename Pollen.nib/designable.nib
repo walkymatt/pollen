@@ -747,8 +747,8 @@ QXBwbGUgQ29tcHV0ZXIsIEluYy4sIDIwMDUAAAAAA</bytes>
 								</object>
 								<reference key="NSSupport" ref="671858214"/>
 								<reference key="NSControlView" ref="916898119"/>
-								<double key="NSMaxValue">1.2</double>
-								<double key="NSMinValue">0.40000000000000002</double>
+								<double key="NSMaxValue">1.3999999999999999</double>
+								<double key="NSMinValue">0.20000000000000001</double>
 								<double key="NSValue">0.80000000000000004</double>
 								<double key="NSAltIncValue">0.0</double>
 								<int key="NSNumberOfTickMarks">9</int>
