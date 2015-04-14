@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>5C481FA2-31B3-4BF6-9A77-3AFC5908610E</string>
+	<key>IDESourceControlProjectName</key>
+	<string>pollen</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>9E91D51ABD406FD179B32A132BFB93F23D5F1450</key>
+		<string>xgrid.complex.ucl.ac.uk:git/personal/pollen</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>pollen.xcodeproj</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>9E91D51ABD406FD179B32A132BFB93F23D5F1450</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>xgrid.complex.ucl.ac.uk:git/personal/pollen</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>111</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>9E91D51ABD406FD179B32A132BFB93F23D5F1450</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>9E91D51ABD406FD179B32A132BFB93F23D5F1450</string>
+			<key>IDESourceControlWCCName</key>
+			<string>pollen</string>
+		</dict>
+	</array>
+</dict>
+</plist>

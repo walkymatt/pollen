@@ -70,16 +70,16 @@ enum
 	BOOL		_initedGL;
 
 	// modes
-	int		modeFrameLimits[NUM_MODES];
-	int		mode;
+	NSInteger		modeFrameLimits[NUM_MODES];
+	NSInteger		mode;
 
-	int		playList[MAX_PLAYLIST_SIZE];
-	int		playListSize;
-	int		playListIndex;
-	int		frameCount;
-	int		frameLimit;
+	NSInteger		playList[MAX_PLAYLIST_SIZE];
+	NSInteger		playListSize;
+	NSInteger		playListIndex;
+	NSInteger		frameCount;
+	NSInteger		frameLimit;
 
-	int		drawMode;
+	NSInteger		drawMode;
 
 	// disable all drawing except on main screen?
 	BOOL	mainScreenOnly;
@@ -90,36 +90,36 @@ enum
 
 	// name of the logo image file
 	NSString*	logoFile;
-	int		logoMode;
+	NSInteger	logoMode;
 	NSImage*	logoImageSrc;
 
 	// logo pixel data (if any)
 	Colour3f*	logo;
-	int		logoWidth;
-	int		logoHeight;
+	NSInteger		logoWidth;
+	NSInteger		logoHeight;
 
 	// number of non-background pixels in the image
 	// this must reach some arbitrary limit (say 50)
 	// or else the image is rejected and the default
 	// used instead
-	int		numNonBGPixels;
+	NSInteger		numNonBGPixels;
 
 	// use colours from the logo image?
-	int		colourMode;
+	NSInteger		colourMode;
 
 	// minimum contrast required for a pixel to be
 	// accepted as non-background
 	float	minimumContrast;
 
 	// used and actual sizes of the motes array
-	int		numMotes;
-	int		numMotesAllocated;
+	NSInteger		numMotes;
+	NSInteger		numMotesAllocated;
 
 	// size of an individual mote
-	int		moteSize;
+	NSInteger		moteSize;
 
 	// shape of an individual mote
-	int		moteShape;
+	NSInteger		moteShape;
 
 	// are motes directional?
 	BOOL	directional;
@@ -140,16 +140,16 @@ enum
 	Matrix2f	rotators[NUM_FIELDS];
 
 	// pixel width of each field cell
-	int		fieldWidth;
+	NSInteger		fieldWidth;
 
 	// pixel height of each field cell
-	int		fieldHeight;
+	NSInteger		fieldHeight;
 
 	// pixel width of the display surface
-	int		displayWidth;
+	NSInteger		displayWidth;
 
 	// pixel height of the display surface
-	int		displayHeight;
+	NSInteger		displayHeight;
 
 	// colour to which the background is cleared
 	Color3f	bg;

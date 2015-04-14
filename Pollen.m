@@ -64,14 +64,14 @@ const float WEIGHT_RANGE = 15.0f;
             };
             
             NSOpenGLPixelFormat *format
-				= [[[NSOpenGLPixelFormat alloc] initWithAttributes:attribs] autorelease];
+				= [[NSOpenGLPixelFormat alloc] initWithAttributes:attribs];
             
             drawingEnabled = YES;
 			
 			NSRect glFrame = frame;
 			glFrame.origin.x = glFrame.origin.y = 0;
             
-            _view = [[[NSOpenGLView alloc] initWithFrame:glFrame pixelFormat:format] autorelease];
+            _view = [[NSOpenGLView alloc] initWithFrame:glFrame pixelFormat:format];
 			
 			if ( _view )
 			{
@@ -161,7 +161,7 @@ const float WEIGHT_RANGE = 15.0f;
 // initialize a single mote
 - (void) initMote:(int) index
 {
-    int logoIndex = 0;
+    NSInteger logoIndex = 0;
     
     motes[index].position.x = SSRandomFloatBetween ( 0, displayWidth );
     motes[index].position.y = SSRandomFloatBetween ( 0, displayHeight );
@@ -178,8 +178,8 @@ const float WEIGHT_RANGE = 15.0f;
         while ( 1 )
         {
             Colour3f* pixel;
-            int logoX = SSRandomIntBetween ( 0, logoWidth ) % logoWidth;
-            int logoY = SSRandomIntBetween ( 0, logoHeight ) % logoHeight;
+            NSInteger logoX = SSRandomIntBetween ( 0, (int)logoWidth ) % logoWidth;
+            NSInteger logoY = SSRandomIntBetween ( 0, (int)logoHeight ) % logoHeight;
             logoIndex = logoX + logoY * logoWidth;
             
             pixel = logo + logoIndex;
@@ -281,8 +281,6 @@ const float WEIGHT_RANGE = 15.0f;
     NSData* tiffData;
     NSBitmapImageRep* logoBits;
     
-    if ( logoImageSrc != nil )
-        [logoImageSrc release];
     
     logoImageSrc = [[NSImage alloc] initWithContentsOfFile:logoFile];
     
@@ -297,7 +295,7 @@ const float WEIGHT_RANGE = 15.0f;
     // get the image data in TIFF form
     tiffData = [logoImageSrc TIFFRepresentation];
     
-    logoBits = [[[NSBitmapImageRep alloc] initWithData:tiffData] autorelease];
+    logoBits = [[NSBitmapImageRep alloc] initWithData:tiffData];
     logoWidth = [logoBits pixelsWide];
     logoHeight = [logoBits pixelsHigh];
 	
@@ -307,7 +305,7 @@ const float WEIGHT_RANGE = 15.0f;
 		|| ([logoBits samplesPerPixel] != 3 && [logoBits samplesPerPixel] != 4) )
 	{
 		NSBitmapImageRep* newRep =
-		[[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
+		[[NSBitmapImageRep alloc] initWithBitmapDataPlanes:NULL
 												pixelsWide:logoWidth
 												pixelsHigh:logoHeight
 											 bitsPerSample:8
@@ -316,7 +314,7 @@ const float WEIGHT_RANGE = 15.0f;
 												  isPlanar:NO
 											colorSpaceName:NSCalibratedRGBColorSpace
 											   bytesPerRow:0
-											  bitsPerPixel:0] autorelease];
+											  bitsPerPixel:0];
 		[NSGraphicsContext saveGraphicsState];
 		
 		NSGraphicsContext* context = [NSGraphicsContext graphicsContextWithBitmapImageRep:newRep];
@@ -334,11 +332,11 @@ const float WEIGHT_RANGE = 15.0f;
 
 - (Colour3f*) getPixelColoursFromBitmapRep:(NSBitmapImageRep*)bitmap
 {
-    int numPixels = logoWidth * logoHeight;
+    NSInteger numPixels = logoWidth * logoHeight;
     unsigned char* rawData = [bitmap bitmapData];
-    int bitsPerPixel = [bitmap bitsPerPixel];
-    int samplesPerPixel = [bitmap samplesPerPixel];
-    int bytesPerRow = [bitmap bytesPerRow];
+    NSInteger bitsPerPixel = [bitmap bitsPerPixel];
+    NSInteger samplesPerPixel = [bitmap samplesPerPixel];
+    NSInteger bytesPerRow = [bitmap bytesPerRow];
     Colour3f* result;
     Colour3f* dest;
     float distance;
@@ -429,7 +427,7 @@ const float WEIGHT_RANGE = 15.0f;
 - (void) loadPrefs
 {
 	// set up the default defaults
-	NSMutableDictionary* defs = [[[NSMutableDictionary alloc] init] autorelease];
+	NSMutableDictionary* defs = [[NSMutableDictionary alloc] init];
 	[defs setObject:[NSNumber numberWithInt:NUM_MOTES] forKey:@"numMotes"];
 	[defs setObject:[NSNumber numberWithInt:DEFAULT_MOTE_SIZE] forKey:@"moteSize"];
 	[defs setObject:[NSNumber numberWithBool:NO] forKey:@"mainScreenOnly"];
@@ -828,7 +826,7 @@ const float WEIGHT_RANGE = 15.0f;
     glClear ( GL_COLOR_BUFFER_BIT );
     
     // set up the view system
-    glViewport ( 0, 0, displayWidth, displayHeight );
+    glViewport ( 0, 0, (int)displayWidth, (int)displayHeight );
     glMatrixMode ( GL_PROJECTION );
     glLoadIdentity ();
     gluOrtho2D ( 0, displayWidth, 0, displayHeight );
@@ -1023,7 +1021,7 @@ const float WEIGHT_RANGE = 15.0f;
 - (NSWindow*) configureSheet
 {
     [NSBundle loadNibNamed:@"Pollen.nib" owner:self];
-    [motesSlider setIntValue: numMotes];
+    [motesSlider setIntValue: (int)numMotes];
     [tailsBox setIntValue: (drawMode == DRAW_LINES)];
 	[defaultColours setState: (colourMode == COLOURS_DEFAULT) ? NSOnState : NSOffState];
 	[customColours setState: (colourMode == COLOURS_CUSTOM) ? NSOnState : NSOffState];
@@ -1031,7 +1029,7 @@ const float WEIGHT_RANGE = 15.0f;
     [contrastBox setIntValue: (minimumContrast > CONTRAST_OFF)];
     [screensBox setIntValue: mainScreenOnly];
     [logoImage setImage:logoImageSrc];
-	[sizeSlider setIntValue: (moteSize > 19 ? DEFAULT_MOTE_SIZE : (moteSize < 1 ? DEFAULT_MOTE_SIZE : (20 - moteSize)))];
+	[sizeSlider setIntValue: (int)(moteSize > 19 ? DEFAULT_MOTE_SIZE : (moteSize < 1 ? DEFAULT_MOTE_SIZE : (20 - moteSize)))];
 	[directionalButton setIntValue: directional];
 	
 	[squareButton setIntValue: (moteShape == MOTE_SQUARE)];
@@ -1132,7 +1130,7 @@ const float WEIGHT_RANGE = 15.0f;
 
 - (IBAction)chooseLogo:(id)sender
 {
-    int result;
+    NSInteger result;
     NSArray* fileTypes = [NSImage imageFileTypes];
     NSOpenPanel* panel = [NSOpenPanel openPanel];
     
@@ -1185,7 +1183,6 @@ const float WEIGHT_RANGE = 15.0f;
 {
     logoMode = LOGO_NONE;
     logoFile = nil;
-    [logoImageSrc release];
     logoImageSrc = nil;
     [logoImage setImage: nil];
     reinitMotes = YES;
