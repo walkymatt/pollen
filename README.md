@@ -4,10 +4,10 @@ Pollen is a simple particle-based screensaver for Mac OS X. A bunch of "pollen" 
 This code is old and ugly. It has been very superficially updated to build with current tools (albeit with some deprecation warnings) but the bulk of it is still just a drunken hack dating back to the beginning of the century. Approach with caution.
 
 ## What's new?
-Now built with Xcode 6, using ARC. It is not clear that this actually brings any benefits — it probably just means Pollen will no longer run on old Macs and OS X versions. If you’re running Tiger or something, an older build is still available from the [homepage][pollen].
+Now built with Xcode 12, and updated to fill the screen on Catalina. (Not tested on Big Sur, so who knows?)
 
 ## Installation
-Place the built `Pollen.saver` file into your `Library/Screen Savers` folder. For recent systems this folder is hidden in the Finder by default, but you can reach it using **Go -> Go to Folder...** (or Cmd-K).
+Double-click the built `Pollen.saver` file to install (or copy manually into your `Library/Screen Savers` folder).
 
 ## Logo
 Pollen is set to display its own logo by default, but you can configure it to use any other suitable image through the preferences panel. It should be able to handle most image types readable by OS X. The image is used at its natural size, not scaled to the screen, so be sure to pick an image that fits nicely onscreen with some space around it. (Note that OS X will scale the image for Retina screens.)
@@ -20,7 +20,7 @@ A logo will usually look better when represented by a larger number of motes, bu
 Pollen may behave oddly with some multiple screen setups, and performance may be impaired since a separate copy is run for each screen. You may prefer to have Pollen render only to your main screen, leaving all other screens blank; hence the checkbox in the configuration dialog.
 
 ## Credits
-As mentioned above, Monroe Williams suggested the Skip pixels near background behaviour. Brian Ramagli (aka Sky Hawk) at [HKA Software][hka] helped improve the drawing code.
+Richard Hallas nudged me to update for Catalina. Monroe Williams suggested the Skip pixels near background behaviour. Brian Ramagli (aka Sky Hawk) at [HKA Software][hka] helped improve the drawing code.
 
   [pollen]:  http://walkytalky.net/software/pollen/
   [hka]: http://www.hkasoftware.com

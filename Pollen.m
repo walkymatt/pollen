@@ -22,7 +22,7 @@
 
 #define FPS 60
 
-#define DEFAULT_LOGO @"pollen.pict"
+#define DEFAULT_LOGO @"pollen.tiff"
 
 const Color3f LIGHT = {1.0, 0.2, 0.69};
 const Color3f HEAVY = {1.0, 0.8, 0.5};
@@ -54,7 +54,7 @@ const float WEIGHT_RANGE = 15.0f;
         // only draw in preview mode or when we are on the main screen
         if ( preview || !mainScreenOnly || (frame.origin.x == 0 && frame.origin.y == 0) )
         {
-            NSOpenGLPixelFormatAttribute attribs[] =
+/*            NSOpenGLPixelFormatAttribute attribs[] =
             {
                 NSOpenGLPFAAccelerated,
                 NSOpenGLPFADepthSize, 16,
@@ -62,45 +62,49 @@ const float WEIGHT_RANGE = 15.0f;
                 NSOpenGLPFAClosestPolicy,
                 0
             };
+*/
+            NSOpenGLPixelFormatAttribute attribs[] =
+            {
+                NSOpenGLPFAAccelerated,
+                NSOpenGLPFAColorSize, (NSOpenGLPixelFormatAttribute)32,
+                NSOpenGLPFADoubleBuffer,
+                NSOpenGLPFAMinimumPolicy,
+                NSOpenGLPFADepthSize, (NSOpenGLPixelFormatAttribute)16,
+                NSOpenGLPFAAllowOfflineRenderers,
+                (NSOpenGLPixelFormatAttribute)0
+            };
             
             NSOpenGLPixelFormat *format
 				= [[NSOpenGLPixelFormat alloc] initWithAttributes:attribs];
             
             drawingEnabled = YES;
 			
-			NSRect glFrame = frame;
-			glFrame.origin.x = glFrame.origin.y = 0;
+//			NSRect glFrame = frame;
+//			glFrame.origin.x = glFrame.origin.y = 0;
             
-            _view = [[NSOpenGLView alloc] initWithFrame:glFrame pixelFormat:format];
+            _view = [[NSOpenGLView alloc] initWithFrame:NSZeroRect pixelFormat:format];
+            _view.wantsBestResolutionOpenGLSurface = YES;
+            [self addSubview:_view];
+            
+            [_view.openGLContext makeCurrentContext];
+            
+//            NSRect newBounds = [_view convertRectToBacking:_view.bounds];
 			
-			if ( _view )
-			{
-				NSOpenGLContext *ctx = [_view openGLContext];
-				[ctx makeCurrentContext];
-				GLint VBL = 1;
-				[ctx setValues:&VBL forParameter:NSOpenGLCPSwapInterval];
-				
-				[self setAutoresizesSubviews:YES];
-				
-				[self addSubview:_view];
-				[self setAnimationTimeInterval:1.0/FPS];
+            self.animationTimeInterval = 1.0/FPS;
 
-				glClearColor(0.0, 0.0, 0.0, 1.0);
-				glClear(GL_COLOR_BUFFER_BIT);
-				glFlush();
-				
-				[ctx flushBuffer];
-				
-				if ( logoFile != nil )
-					[self loadLogo];
-				
-				// initialize the vector field
-				[self initVectorField];
-				
-				// allocate all motes
-				[self allocateMotes];
-			}
-			
+//            glClearColor(0.0, 0.0, 0.0, 1.0);
+//            glClear(GL_COLOR_BUFFER_BIT);
+//            glFlush();
+        
+            if ( logoFile != nil )
+                [self loadLogo];
+            
+            // initialize the vector field
+            [self initVectorField];
+            
+            // allocate all motes
+            [self allocateMotes];
+
         }
         else
         {
@@ -218,24 +222,36 @@ const float WEIGHT_RANGE = 15.0f;
     int i = 0;
     
     [super setFrameSize:newSize];
-    [_view setFrameSize:newSize];
-    _initedGL = 0;
     
-	if ( drawingEnabled )
-	{
-		fieldHeight = newSize.height / FIELDS_DOWN;
-		fieldWidth = newSize.width / FIELDS_ACROSS;
-		displayWidth = newSize.width;
-		displayHeight = newSize.height;
-		
-		// now that we know the display size, we can initialize the motes
-		for ( ; i < numMotes; ++i )
-			[self initMote:i];  
-		
-		// set the background colour if necessary
-		if ( logo != nil && colourMode == COLOURS_IMAGE )
-			bg = *logo;
-	}
+    if ( _view )
+    {
+        [_view setFrameSize:newSize];
+        
+        NSRect newBounds = _view.bounds;
+        
+        if (_view.wantsBestResolutionOpenGLSurface)
+        {
+            newBounds = [_view convertRectToBacking:_view.bounds];
+        }
+        
+        _initedGL = 0;
+    
+        if ( drawingEnabled )
+        {
+            fieldHeight = newBounds.size.height / FIELDS_DOWN;
+            fieldWidth = newBounds.size.width / FIELDS_ACROSS;
+            displayWidth = newBounds.size.width;
+            displayHeight = newBounds.size.height;
+            
+            // now that we know the display size, we can initialize the motes
+            for ( ; i < numMotes; ++i )
+                [self initMote:i];
+            
+            // set the background colour if necessary
+            if ( logo != nil && colourMode == COLOURS_IMAGE )
+                bg = *logo;
+        }
+    }
 }
 
 - (void) initGL:(int) width :(int)height
@@ -536,27 +552,38 @@ const float WEIGHT_RANGE = 15.0f;
 
 #pragma mark Drawing
 
+- (void)drawRect:(NSRect)rect
+{
+    [[NSColor blackColor] set];
+    NSRectFill(rect);
+}
+
 - (void) startAnimation
 {
+    [super startAnimation];
+
     if ( drawingEnabled )
     {
-        [_view lockFocus];
-        
+        [self lockFocus];
+        [[_view openGLContext] makeCurrentContext];
+
         if ( !_initedGL )
         {
-            [self initGL:(int)[self frame].size.width :(int)[self frame].size.height];
+            [self initGL:(int)displayWidth :(int)displayHeight];
             _initedGL = YES;
         }
-		
+		        
 		glClearColor ( bg.r, bg.g, bg.b, 1.0 );
 		glClear ( GL_COLOR_BUFFER_BIT );
 		glFlush ();
+        
+        GLint interval = 1;
+        CGLSetParameter(CGLGetCurrentContext(), kCGLCPSwapInterval, &interval);    // don't allow screen tearing
+        
 		[[_view openGLContext] flushBuffer];
         
-        [_view unlockFocus];
+        [self unlockFocus];
     }
-
-	[super startAnimation];
 }
 
 - (void) animateOneFrame
@@ -569,6 +596,7 @@ const float WEIGHT_RANGE = 15.0f;
         
         [_view lockFocus];
         [self drawMotes];
+        [[_view openGLContext] flushBuffer];
         [_view unlockFocus];
     }
 }
@@ -1136,7 +1164,7 @@ const float WEIGHT_RANGE = 15.0f;
     
     result = [panel runModalForDirectory:NSHomeDirectory() file:nil types:fileTypes];
     
-    if ( result == NSOKButton )
+    if ( result == NSModalResponseOK )
     {
         logoFile = [[panel filename] copyWithZone:nil];
 		
