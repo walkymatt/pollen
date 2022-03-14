@@ -335,10 +335,10 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
-				ONLY_ACTIVE_ARCH = YES;
+				ONLY_ACTIVE_ARCH = NO;
 				RUN_CLANG_STATIC_ANALYZER = NO;
 				SDKROOT = macosx;
-				"SDKROOT[arch=x86_64]" = macosx;
+				"SDKROOT[arch=*]" = macosx;
 			};
 			name = Debug;
 		};
@@ -377,7 +377,7 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.13;
 				SDKROOT = macosx;
-				"SDKROOT[arch=x86_64]" = macosx;
+				"SDKROOT[arch=*]" = macosx;
 			};
 			name = Release;
 		};
